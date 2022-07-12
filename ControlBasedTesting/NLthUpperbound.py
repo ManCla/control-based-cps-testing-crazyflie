@@ -11,13 +11,11 @@ class NLthUpperbound():
         self.w_min = w_min        # frequency range to explore
         self.w_max = w_max
 
-        self.
-
     def add_sample(self, frequency, amplitude_min, amplitude_max):
         # add sample to threshold
         pass
 
-    def sample(self)
+    def sample(self):
         # return frequency to test because of too large gap between
         # adjacent samples
         pass
