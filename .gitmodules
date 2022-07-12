@@ -1,0 +1,4 @@
+[submodule "crazyflie-simulation-python"]
+	path = CrazyflieSimulationPython
+	url = git@github.com:ManCla/crazyflie-simulation-python.git
+	branch = ztest-approach-repo-integration

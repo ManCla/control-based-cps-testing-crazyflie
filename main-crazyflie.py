@@ -3,7 +3,7 @@ from os.path import exists # to check if test has already been performed
 # for Crazyflie Testing
 from CrazyflieSimulationPython.cfSimulator import cfSimulation, ZAnalysis, zTest
 
-data_directory = 'flightdata/'
+data_directory = 'cfdata/'
 
 #####################################################################
 ### PHASE 1: sinusoidal-based non-linearity threshold exploration ###
