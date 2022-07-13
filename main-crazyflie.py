@@ -14,9 +14,9 @@ data_directory = 'cfdata/'
 # INPUTS: f_min, f_max, delta_amp, max_amp
 # OUTPUT: non-linear threshold
 
-f_min     = 0.01    # [Hz]
+f_min     = 0.6     # [Hz]
 f_max     = 15      # [Hz]
-delta_amp = 0.1     # [m]
+delta_amp = 1.0     # [m]
 max_amp   = 6       # [m]  assumed that max_amp>delta_amp
 nl_max    = 0.3     # value of non-linear degree above which a test
                     # is considered too non-linear and not interesting 
@@ -26,10 +26,13 @@ sinusoidal_upper_bound = NLthUpperbound(delta_amp, f_min, f_max)
 
 ### Find th for f_min ###
 lower, upper = binary_search_sinus_freq(cfSimulation, zTest, ZAnalysis, \
-                         2, delta_amp, max_amp, nl_max, data_directory)
-sinusoidal_upper_bound.add_sample(2, lower, upper) # add sample to threshold
+                         f_min, delta_amp, max_amp, nl_max, data_directory)
+sinusoidal_upper_bound.add_sample(f_min, lower, upper) # add sample to threshold
 
-# find th for f_max
+### Find th for f_max ###
+lower, upper = binary_search_sinus_freq(cfSimulation, zTest, ZAnalysis, \
+                         f_max, delta_amp, max_amp, nl_max, data_directory)
+sinusoidal_upper_bound.add_sample(f_max, lower, upper) # add sample to threshold
 
 
 ####################################

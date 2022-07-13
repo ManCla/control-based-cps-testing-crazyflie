@@ -18,6 +18,10 @@ class NLthUpperbound():
         # init vector for the [freq, A_min, A_max] triplets
         self.nlth = np.array([], dtype=th_sample_type)
 
+    '''
+    Add frequency sample to bound to non-linearity threshold
+    A sample contains a lower and upper bound of the threshold
+    '''
     def add_sample(self, frequency, amplitude_min, amplitude_max):
         # check if frequency is in range. Rise just warning otherwise
         if frequency<self.f_min or frequency>self.f_max :
@@ -31,15 +35,30 @@ class NLthUpperbound():
         self.nlth = np.append(self.nlth,np.array((frequency, amplitude_min, amplitude_max),\
                                                  dtype=th_sample_type))
 
+    '''
+    Search samples in threshold for "jumps" in threshold that are larger than delta_amp
+    If found return a frequency where the jump is that should be sampled
+    '''
     def sample(self):
-        # return frequency to test because of too large gap between
-        # adjacent samples
-        pass
+        # check for nlth to have at least two elements
+        if self.nlth.size<2 :
+            print("ERROR--NLthUpperbound: need at least two samples in nlth to evaluate gaps")
+            return
+        for i, th in enumerate(self.nlth) :
+            if i == self.nlth.size-1 : 
+                print("Phase 1 done: no jumps >delta_amp in threshold preliminary evaluation")
+            else :
+                a_avg_prev = (  self.nlth[i]['A_max'] +   self.nlth[i]['A_min']) /2
+                a_avg_next = (self.nlth[i+1]['A_max'] + self.nlth[i+1]['A_min']) /2
+                if abs(a_avg_next-a_avg_prev)>self.delta_amp :
+                    return (self.nlth[i]['freq'] + self.nlth[i+1]['freq']) /2
 
 if __name__ == "__main__":
-    a = NLthUpperbound(1, 1, 5)
+    a = NLthUpperbound(0.5, 1, 5)
+    print(a.sample())
     a.add_sample(1.5,4,5)
-    a.add_sample(2.5,4,5)
-    a.add_sample(2,4,5)
+    a.add_sample(2.5,3,4)
+    a.add_sample(2.25,3.5,4.5)
+    a.add_sample(3.25,3.5,4.5)
     a.add_sample(4,4,5)
-    print(a.nlth)
+    print(a.sample())
