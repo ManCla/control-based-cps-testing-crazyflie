@@ -15,8 +15,8 @@ data_directory = 'cfdata/'
 # OUTPUT: non-linear threshold
 
 f_min     = 0.6     # [Hz]
-f_max     = 10      # [Hz]
-delta_amp = 3.0     # [m]
+f_max     = 4.5     # [Hz]
+delta_amp = 0.25    # [m]
 max_amp   = 6       # [m]  assumed that max_amp>delta_amp
 nl_max    = 0.3     # value of non-linear degree above which a test
                     # is considered too non-linear and not interesting 
@@ -40,9 +40,8 @@ while freq :
                                             freq, delta_amp, max_amp, nl_max, data_directory)
     sinusoidal_upper_bound.add_sample(freq, lower, upper) # add sample to threshold
     freq = sinusoidal_upper_bound.sample()
-    print(sinusoidal_upper_bound.nlth)
 
-
+sinusoidal_upper_bound.plot()
 
 ####################################
 ### PHASE 2: test set generation ###
