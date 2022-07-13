@@ -26,6 +26,11 @@ class NLthUpperbound():
         # check if frequency is in range. Rise just warning otherwise
         if frequency<self.f_min or frequency>self.f_max :
             print("WARNING--NLthUpperbound: you sampled outside out of the freq bounds")
+        ## TODO check if frequency has already been sampled
+        if frequency in self.nlth['freq'] :
+            print("WARNING--NLthUpperbound: trying to add the same frequency twice")
+            return
+
         # 
         for i, th in enumerate(self.nlth) :
             if frequency<th['freq'] :
@@ -37,16 +42,18 @@ class NLthUpperbound():
 
     '''
     Search samples in threshold for "jumps" in threshold that are larger than delta_amp
-    If found return a frequency where the jump is that should be sampled
+    If found, returns a frequency where the jump is that should be sampled.
+    If something is wrong or search is over returns False
     '''
     def sample(self):
         # check for nlth to have at least two elements
         if self.nlth.size<2 :
             print("ERROR--NLthUpperbound: need at least two samples in nlth to evaluate gaps")
-            return
+            return False
         for i, th in enumerate(self.nlth) :
             if i == self.nlth.size-1 : 
                 print("Phase 1 done: no jumps >delta_amp in threshold preliminary evaluation")
+                return False
             else :
                 a_avg_prev = (  self.nlth[i]['A_max'] +   self.nlth[i]['A_min']) /2
                 a_avg_next = (self.nlth[i+1]['A_max'] + self.nlth[i+1]['A_min']) /2
