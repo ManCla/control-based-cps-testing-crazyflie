@@ -74,7 +74,7 @@ if __name__ == "__main__":
     ### Iterate over Test Results and Plot ###
     ##########################################
 
-    directory = fdh.data_directory
+    directory = "cfdata"
     dir_content = os.listdir(directory)
     # filter out directories and look only at files
     dir_content = list(filter(lambda x:os.path.isfile(directory+'/'+x), dir_content))
