@@ -1,4 +1,6 @@
 import numpy as np
+import matplotlib.pyplot as plt
+from CrazyflieSimulationPython.cfSimulator import ZAnalysis as fdh # just used for some plotting parameters
 
 '''
 Class to store and manage the upper-bound estimation
@@ -6,7 +8,13 @@ of the non-linearity threshold obtained with sinusoidal
 inputs.
 '''
 
+# Type of element in threshold vector
 th_sample_type = np.dtype([('freq', '<f4'), ('A_min', '<f4'), ('A_max', '<f4')])
+
+# Some plotting parameters
+x_label = "Frequency [Hz]"
+y_label = "Amplitude [m]"
+x_min   = 0.005 # used as x coordinate for zero frequency component of tests in log scale
 
 class NLthUpperbound():
     
@@ -59,6 +67,24 @@ class NLthUpperbound():
                 a_avg_next = (self.nlth[i+1]['A_max'] + self.nlth[i+1]['A_min']) /2
                 if abs(a_avg_next-a_avg_prev)>self.delta_amp :
                     return (self.nlth[i]['freq'] + self.nlth[i+1]['freq']) /2
+
+    '''
+    Plot upper and lower bounds
+    '''
+    def plot(self) :
+        # 
+        non_lin_fig , non_lin_ax = plt.subplots(1, 1)
+        non_lin_fig.tight_layout()
+        non_lin_ax.grid(color=fdh.chosen_grid_color, linestyle=fdh.chosen_grid_linestyle, linewidth=fdh.chosen_grid_linewidth)
+        plt.setp(non_lin_ax, xlabel=x_label, ylabel=y_label)
+        # non_lin_ax.set_xscale('log')
+        # non_lin_ax.set_yscale('log')
+        non_lin_ax.title.set_text("Non Linear Degree All Shapes Together")
+
+        non_lin_ax.plot(self.nlth['freq'],self.nlth['A_min'])
+        non_lin_ax.plot(self.nlth['freq'],self.nlth['A_max'])
+
+        plt.show()
 
 if __name__ == "__main__":
     a = NLthUpperbound(0.5, 1, 5)
