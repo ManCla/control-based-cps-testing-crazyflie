@@ -35,12 +35,14 @@ lower, upper = binary_search_sinus_freq(cfSimulation, zTest, ZAnalysis, \
 sinusoidal_upper_bound.add_sample(f_max, lower, upper) # add sample to threshold
 
 freq = sinusoidal_upper_bound.sample()
+i=0
 while freq :
     lower, upper = binary_search_sinus_freq(cfSimulation, zTest, ZAnalysis, \
                                             freq, delta_amp, max_amp, nl_max, data_directory)
     sinusoidal_upper_bound.add_sample(freq, lower, upper) # add sample to threshold
     freq = sinusoidal_upper_bound.sample()
-
+    i=i+1
+print("Phase 1 done: I have ran {} tests".format(i))
 sinusoidal_upper_bound.plot()
 
 ####################################
