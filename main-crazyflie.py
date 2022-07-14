@@ -14,15 +14,16 @@ data_directory = 'cfdata/'
 # INPUTS: f_min, f_max, delta_amp, max_amp
 # OUTPUT: non-linear threshold
 
-f_min     = 0.6     # [Hz]
-f_max     = 4.5     # [Hz]
-delta_amp = 0.25    # [m]
-max_amp   = 6       # [m]  assumed that max_amp>delta_amp
-nl_max    = 0.3     # value of non-linear degree above which a test
-                    # is considered too non-linear and not interesting 
+f_min      = 0.1  # [Hz]
+f_max      = 2    # [Hz]
+delta_amp  = 0.05 # [m]
+delta_freq = 0.01 # [Hz] maximum resolution on frequency
+max_amp    = 6    # [m]  assumed that max_amp>delta_amp
+nl_max     = 0.3  # value of non-linear degree above which a test
+                  # is considered too non-linear and not interesting 
 
 # crate object to store upperbound of nonlinear th based on sinus tests
-sinusoidal_upper_bound = NLthUpperbound(delta_amp, f_min, f_max)
+sinusoidal_upper_bound = NLthUpperbound(delta_amp, delta_freq, f_min, f_max)
 
 ### Find th for f_min ###
 lower, upper = binary_search_sinus_freq(cfSimulation, zTest, ZAnalysis, \
@@ -35,14 +36,12 @@ lower, upper = binary_search_sinus_freq(cfSimulation, zTest, ZAnalysis, \
 sinusoidal_upper_bound.add_sample(f_max, lower, upper) # add sample to threshold
 
 freq = sinusoidal_upper_bound.sample()
-i=0
 while freq :
     lower, upper = binary_search_sinus_freq(cfSimulation, zTest, ZAnalysis, \
                                             freq, delta_amp, max_amp, nl_max, data_directory)
     sinusoidal_upper_bound.add_sample(freq, lower, upper) # add sample to threshold
     freq = sinusoidal_upper_bound.sample()
-    i=i+1
-print("Phase 1 done: I have ran {} tests".format(i))
+print("Phase 1 done: I have ran {} tests".format(sinusoidal_upper_bound.nlth.size))
 sinusoidal_upper_bound.plot()
 
 ####################################
