@@ -41,7 +41,7 @@ while freq :
                                             freq, delta_amp, max_amp, nl_max, data_directory)
     sinusoidal_upper_bound.add_sample(freq, lower, upper) # add sample to threshold
     freq = sinusoidal_upper_bound.sample()
-print("Phase 1 done: I have ran {} tests".format(sinusoidal_upper_bound.nlth.size))
+print("Phase 1 done: I have sampled {} frequencies".format(sinusoidal_upper_bound.nlth.size))
 sinusoidal_upper_bound.plot()
 
 ####################################
