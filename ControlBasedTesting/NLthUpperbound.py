@@ -82,6 +82,8 @@ class NLthUpperbound():
         plt.setp(non_lin_ax, xlabel=x_label, ylabel=y_label)
         non_lin_ax.set_xscale('log')
         non_lin_ax.set_yscale('log')
+        # non_lin_ax.set_ylim(0,6.3)
+        non_lin_ax.set_xlim(self.f_min,self.f_max)
         non_lin_ax.title.set_text("Non Linear Degree All Shapes Together")
 
         non_lin_ax.plot(self.nlth['freq'],self.nlth['A_min'])
