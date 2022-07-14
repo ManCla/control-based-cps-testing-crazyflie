@@ -18,9 +18,10 @@ x_min   = 0.005 # used as x coordinate for zero frequency component of tests in 
 
 class NLthUpperbound():
     
-    def __init__(self, delta_amp, f_min, f_max):
-        self.delta_amp  = delta_amp # max gap accepted between amp th samples
-        self.f_min = f_min          # frequency range to explore
+    def __init__(self, delta_amp, delta_freq, f_min, f_max):
+        self.delta_amp  = delta_amp  # max gap accepted between amp th samples
+        self.delta_freq = delta_freq # min gap accepted between amp th samples
+        self.f_min = f_min           # frequency range to explore
         self.f_max = f_max
 
         # init vector for the [freq, A_min, A_max] triplets
@@ -65,7 +66,9 @@ class NLthUpperbound():
             else :
                 a_avg_prev = (  self.nlth[i]['A_max'] +   self.nlth[i]['A_min']) /2
                 a_avg_next = (self.nlth[i+1]['A_max'] + self.nlth[i+1]['A_min']) /2
-                if abs(a_avg_next-a_avg_prev)>self.delta_amp :
+                amp_gap  = abs(a_avg_next-a_avg_prev)>self.delta_amp
+                freq_gap = abs(self.nlth[i+1]['freq']-self.nlth[i]['freq'])>self.delta_freq
+                if amp_gap and freq_gap :
                     return (self.nlth[i]['freq'] + self.nlth[i+1]['freq']) /2
 
     '''
@@ -77,8 +80,8 @@ class NLthUpperbound():
         non_lin_fig.tight_layout()
         non_lin_ax.grid(color=fdh.chosen_grid_color, linestyle=fdh.chosen_grid_linestyle, linewidth=fdh.chosen_grid_linewidth)
         plt.setp(non_lin_ax, xlabel=x_label, ylabel=y_label)
-        # non_lin_ax.set_xscale('log')
-        # non_lin_ax.set_yscale('log')
+        non_lin_ax.set_xscale('log')
+        non_lin_ax.set_yscale('log')
         non_lin_ax.title.set_text("Non Linear Degree All Shapes Together")
 
         non_lin_ax.plot(self.nlth['freq'],self.nlth['A_min'])
