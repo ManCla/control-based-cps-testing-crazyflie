@@ -39,6 +39,7 @@ freq = sinusoidal_upper_bound.sample()
 while freq :
     lower, upper = binary_search_sinus_freq(cfSimulation, zTest, ZAnalysis, \
                                             freq, delta_amp, max_amp, nl_max, data_directory)
+    print("At freq: {} upper: {} lower: {}".format(freq,upper,lower))
     sinusoidal_upper_bound.add_sample(freq, lower, upper) # add sample to threshold
     freq = sinusoidal_upper_bound.sample()
 print("Phase 1 done: I have sampled {} frequencies".format(sinusoidal_upper_bound.nlth.size))
