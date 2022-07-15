@@ -91,6 +91,9 @@ class NLthUpperbound():
 
         plt.show()
 
+    def maximum_amp() :
+        pass
+
 if __name__ == "__main__":
     a = NLthUpperbound(0.5, 1, 5)
     print(a.sample())
