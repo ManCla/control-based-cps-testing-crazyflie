@@ -15,8 +15,27 @@ Class to store the frequency amplitude points of a given test
 class faPointsTest(object):
     
     def __init__(self, z_ref_freq_peaks, z_ref_amp_peaks):
+        if len(z_ref_freq_peaks)<2 :
+            # functions for second highest and lowest peaks will not work
+            # for inputs that map too only one point. But this should
+            # happen only for sinusoidal inputs that we should not be
+            # considering at this stage
+            print("WARNING--faPointsTest: there is a non-sinusoidal test\
+                                          exciting only one frequency")
         self.z_ref_freq_peaks = z_ref_freq_peaks
         self.z_ref_amp_peaks  = z_ref_amp_peaks
+
+    # return second lowest frequency
+    def f_2ndLowest(self) :
+        return self.z_ref_freq_peaks[1]
+
+    # return second highest frequency
+    def f_2ndHighest(self) :
+        return self.z_ref_freq_peaks[-2]
+
+    # return second highest amplitude
+    def a_Highest(self) :
+        return max(self.z_ref_amp_peaks)
 
 '''
 Class to generate a test set for a given shape and estimated
@@ -76,7 +95,7 @@ class shapeTestSet(object):
         time = np.linspace(0, period, num_samples)
         test = self.test_gen(self.shape, a_gain, t_scale) # create ref generator object
         ref = [test.refGen(t+test.settle)[2]-test.offset for t in time]
-        
+
         # compute fft
         z_fft_freq = fft.fftfreq(num_samples, d=self.dt)
         z_ref_fft  = [abs(x) for x in fft.fft(ref, norm="forward", workers=-1, overwrite_x=True)]
