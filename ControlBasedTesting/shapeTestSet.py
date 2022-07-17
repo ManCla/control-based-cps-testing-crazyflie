@@ -1,6 +1,7 @@
 import numpy as np
 import scipy.signal as signal
 import scipy.fft as fft
+import matplotlib.pyplot as plt
 
 '''
 Class that takes a shape and generates the associated test set for
@@ -28,9 +29,9 @@ class faPointsTest(object):
         self.z_ref_freq_peaks = z_ref_freq_peaks
         self.z_ref_amp_peaks  = z_ref_amp_peaks
 
-    # return second lowest frequency (0Hz excluded)
+    # return second lowest frequency (hence 0Hz excluded)
     def f_2ndLowest(self) :
-        return self.z_ref_freq_peaks[2]
+        return self.z_ref_freq_peaks[1]
 
     # return second highest frequency
     def f_2ndHighest(self) :
@@ -68,7 +69,7 @@ class shapeTestSet(object):
         faPt11 = self.get_test_coordinates(1,1)
         # Find upper-left point in input space
         self.t_min = nlThreshold.f_min/faPt11.f_2ndLowest()
-        self.a_max = nlThreshold.maximum_amp()/faPt11.a_Highest() #
+        self.a_max = nlThreshold.get_maximum_amp()/faPt11.a_Highest() #
         # Find lower-right point in input space (a_min=0)
         self.t_max = nlThreshold.f_max/faPt11.f_2ndLowest()
 
@@ -114,7 +115,21 @@ class shapeTestSet(object):
     plane.
     '''
     def plot_test(self, a_gain, t_scale):
-        pass
+        faPt = self.get_test_coordinates(a_gain,t_scale)
+
+        fig, axs = plt.subplots(1, 1)
+        # plot frequency limits
+        axs.plot([self.nlThreshold.f_min,self.nlThreshold.f_min],[0,self.nlThreshold.get_maximum_amp()], linestyle='dashed', c='black')
+        axs.plot([self.nlThreshold.f_max,self.nlThreshold.f_max],[0,self.nlThreshold.get_maximum_amp()], linestyle='dashed', c='black')
+        # plot linearity upper bounds as from pre-estimation
+        axs.plot(self.nlThreshold.nlth['freq'],self.nlThreshold.nlth['A_min'])
+        axs.plot(self.nlThreshold.nlth['freq'],self.nlThreshold.nlth['A_max'])
+
+        axs.scatter(faPt.z_ref_freq_peaks[1:], faPt.z_ref_amp_peaks[1:], s=10)
+
+        axs.grid()
+        # axs.set_xlim([0, 50])
+        # axs.set_ylim([0,5.1])
 
     '''
     Plot the coordinates in the frequency-amplitude for all the test
