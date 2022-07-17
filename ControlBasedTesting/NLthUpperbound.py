@@ -94,12 +94,13 @@ class NLthUpperbound():
     '''
     return maximum amplitude accepted by upper bound
     '''
-    def maximum_amp(self) :
-        maximum_amp = 0
-        for th in self.nlth :
-            if th['A_max']>maximum_amp :
-                maximum_amp = th['A_max']
-        return maximum_amp
+    def get_maximum_amp(self) :
+        if not(hasattr(self, "maximum_amp")) :
+            self.maximum_amp = 0
+            for th in self.nlth :
+                if th['A_max']>self.maximum_amp :
+                    self.maximum_amp = th['A_max']
+        return self.maximum_amp
 
 if __name__ == "__main__":
     a = NLthUpperbound(0.5, 1, 5)
