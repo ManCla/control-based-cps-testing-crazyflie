@@ -29,13 +29,9 @@ class faPointsTest(object):
         self.z_ref_freq_peaks = z_ref_freq_peaks
         self.z_ref_amp_peaks  = z_ref_amp_peaks
 
-    # return second lowest frequency (hence 0Hz excluded)
-    def f_2ndLowest(self) :
-        return self.z_ref_freq_peaks[1]
-
-    # return second highest frequency
-    def f_2ndHighest(self) :
-        return self.z_ref_freq_peaks[-2]
+    # return frequency with largest component in input
+    def freq_of_max_amp(self) :
+        return self.z_ref_freq_peaks[self.z_ref_amp_peaks[1:].argmax()+1]
 
     # return second highest amplitude (power at 0Hz excluded)
     def a_Highest(self) :
@@ -68,10 +64,10 @@ class shapeTestSet(object):
         # and amplitude coefficients leverages the linearity of the Fourier Transform
         faPt11 = self.get_test_coordinates(1,1)
         # Find upper-left point in input space
-        self.t_min = nlThreshold.f_min/faPt11.f_2ndLowest()
+        self.t_min = nlThreshold.f_min/faPt11.freq_of_max_amp()
         self.a_max = nlThreshold.get_maximum_amp()/faPt11.a_Highest() #
         # Find lower-right point in input space (a_min=0)
-        self.t_max = nlThreshold.f_max/faPt11.f_2ndLowest()
+        self.t_max = nlThreshold.f_max/faPt11.freq_of_max_amp()
 
     '''
     Generate the actual test set by sampling uniformly in the rectangular
