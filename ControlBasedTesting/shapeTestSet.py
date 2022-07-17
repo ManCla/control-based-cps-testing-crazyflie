@@ -71,9 +71,6 @@ class shapeTestSet(object):
         self.a_max = nlThreshold.maximum_amp()/faPt11.a_Highest() #
         # Find lower-right point in input space (a_min=0)
         self.t_max = nlThreshold.f_max/faPt11.f_2ndLowest()
-        print(self.a_max)
-        print(self.t_min)
-        print(self.t_max)
 
     '''
     Generate the actual test set by sampling uniformly in the rectangular
