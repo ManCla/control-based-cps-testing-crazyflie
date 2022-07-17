@@ -61,13 +61,12 @@ class shapeTestSet(object):
         self.dt = dt
 
         # This computation leverages the linearity of the Fourier Transform
-        faPt11 = a.get_test_coordinates(1,1)
-        # Find lower-right point in input space
+        faPt11 = self.get_test_coordinates(1,1)
+        # Find upper-left point in input space
         self.t_min = nlThreshold.f_min/faPt11.f_2ndLowest()
         self.a_max = nlThreshold.maximum_amp()/faPt11.a_Highest() #
-        # Find upper-left point in input space
-        self.t_max = nlThreshold.f_max/faPt11.f_2ndHighest()
-        # self.a_min # this should be just nlth(f_max)
+        # Find lower-right point in input space (a_min=0)
+        self.t_max = nlThreshold.f_max/faPt11.f_2ndLowest()
 
     '''
     Generate the actual test set by sampling uniformly in the rectangular
