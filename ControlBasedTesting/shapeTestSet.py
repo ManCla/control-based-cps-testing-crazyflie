@@ -11,6 +11,9 @@ peak_threshold_percentage = 0.05
 
 '''
 Class to store the frequency amplitude points of a given test
+NOTE: when computing the high/low frequencies/amplitudes we exclude
+      the 0Hz frequency because that one simply corresponds to
+      the average of the signal.
 '''
 class faPointsTest(object):
     
@@ -25,17 +28,17 @@ class faPointsTest(object):
         self.z_ref_freq_peaks = z_ref_freq_peaks
         self.z_ref_amp_peaks  = z_ref_amp_peaks
 
-    # return second lowest frequency
+    # return second lowest frequency (0Hz excluded)
     def f_2ndLowest(self) :
-        return self.z_ref_freq_peaks[1]
+        return self.z_ref_freq_peaks[2]
 
     # return second highest frequency
     def f_2ndHighest(self) :
         return self.z_ref_freq_peaks[-2]
 
-    # return second highest amplitude
+    # return second highest amplitude (power at 0Hz excluded)
     def a_Highest(self) :
-        return max(self.z_ref_amp_peaks)
+        return max(self.z_ref_amp_peaks[1:])
 
 '''
 Class to generate a test set for a given shape and estimated
@@ -60,17 +63,21 @@ class shapeTestSet(object):
         self.nlThreshold = nlThreshold
         self.dt = dt
 
-        # This computation leverages the linearity of the Fourier Transform
+        # This computation of the coefficient for the minimum and maximum frequency
+        # and amplitude coefficients leverages the linearity of the Fourier Transform
         faPt11 = self.get_test_coordinates(1,1)
         # Find upper-left point in input space
         self.t_min = nlThreshold.f_min/faPt11.f_2ndLowest()
         self.a_max = nlThreshold.maximum_amp()/faPt11.a_Highest() #
         # Find lower-right point in input space (a_min=0)
         self.t_max = nlThreshold.f_max/faPt11.f_2ndLowest()
+        print(self.a_max)
+        print(self.t_min)
+        print(self.t_max)
 
     '''
     Generate the actual test set by sampling uniformly in the rectangular
-    range between the points [(t_min,a_max), (t_max,a_min)]
+    range between the points [(t_min,a_max), (t_max,0)]
     '''
     def generate_test_set():
         pass
