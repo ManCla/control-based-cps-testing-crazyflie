@@ -84,7 +84,7 @@ class NLthUpperbound():
         non_lin_ax.set_yscale('log')
         # non_lin_ax.set_ylim(0,6.3)
         non_lin_ax.set_xlim(self.f_min,self.f_max)
-        non_lin_ax.title.set_text("Non Linear Degree All Shapes Together")
+        non_lin_ax.title.set_text("Upper Bound of non-linear threshold retrieved from sinusoidal tests")
 
         non_lin_ax.plot(self.nlth['freq'],self.nlth['A_min'])
         non_lin_ax.plot(self.nlth['freq'],self.nlth['A_max'])
