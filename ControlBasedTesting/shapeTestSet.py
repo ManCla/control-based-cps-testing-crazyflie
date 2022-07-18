@@ -11,6 +11,7 @@ Class that takes a shape and generates the associated test set for
 
 peak_threshold_percentage = 0.05 # used to identify relevant peaks in input spectrum
 scale_factor = 100 # used to scale random integers into floats for test case generation
+test_type = np.dtype([('t_scale', '<f4'), ('a_gain', '<f4')])
 
 '''
 Class to store the frequency amplitude points of a given test
@@ -76,9 +77,7 @@ class shapeTestSet(object):
     '''
     def generate_test_set(self, num_tests):
         # init test case variables
-        self.test_set_t_scale = np.zeros((num_tests))
-        self.test_set_a_gain  = np.zeros((num_tests))
-
+        self.test_cases = np.array([], dtype=test_type)
         # scale up float to integer
         t_min = int(self.t_scale_min*scale_factor)
         t_max = int(self.t_scale_max*scale_factor)+1
@@ -93,8 +92,8 @@ class shapeTestSet(object):
             rand_coef = rnd.betavariate(5,3.5)
             test_a_gain  = a_min + rand_coef*(a_max-a_min)
             # store
-            self.test_set_t_scale[i] = np.array(test_t_scale)
-            self.test_set_a_gain[i]  = np.array(test_a_gain)
+            self.test_cases = np.append(self.test_cases,np.array((test_t_scale, test_a_gain),\
+                                      dtype=test_type))
 
     '''
     Given a time scaling coefficient and an amplitude coefficient
@@ -165,6 +164,6 @@ class shapeTestSet(object):
         axs.plot(self.nlThreshold.nlth['freq'],self.nlThreshold.nlth['A_min'])
         axs.plot(self.nlThreshold.nlth['freq'],self.nlThreshold.nlth['A_max'])
 
-        for i in range(0,len(self.test_set_t_scale)) :
-            faPt = self.get_test_coordinates(self.test_set_t_scale[i],self.test_set_a_gain[i])
+        for i in range(0,len(self.test_cases)) :
+            faPt = self.get_test_coordinates(self.test_cases['t_scale'][i],self.test_cases['a_gain'][i])
             axs.scatter(faPt.z_ref_freq_peaks[1:5], faPt.z_ref_amp_peaks[1:5], s=5)
