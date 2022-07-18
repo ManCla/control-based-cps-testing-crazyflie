@@ -11,7 +11,6 @@ from ControlBasedTesting.shapeTestSet import shapeTestSet
 from CrazyflieSimulationPython.cfSimulator import cfSimulation, ZAnalysis, zTest
 
 data_directory = 'cfdata/'
-rnd.seed(1)
 
 ### TODO: set seed for random test generation ###
 
@@ -67,6 +66,8 @@ for s in zTest.shapes :
     if not(s=='sinus') : # we are not interested in sinus test cases at this step
         print('generating test set for shape: '+s)
         test_set.append(shapeTestSet(zTest,s,sinusoidal_upper_bound,0.001))
+        rnd.seed(10000000*i) # seed is set here so that tests for each shape can be recycled
+                             # when we increase the number of tests per shape
         test_set[i].generate_test_set(num_tests)
         # test_set[i].plot_test_set()
         i=i+1
