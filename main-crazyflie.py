@@ -1,7 +1,9 @@
+import matplotlib.pyplot as plt # for plotting
 
 # utilities of testing approach
 from ControlBasedTesting.binary_search_sinus_freq import binary_search_sinus_freq
 from ControlBasedTesting.NLthUpperbound import NLthUpperbound
+from ControlBasedTesting.shapeTestSet import shapeTestSet
 
 # for Crazyflie Testing
 from CrazyflieSimulationPython.cfSimulator import cfSimulation, ZAnalysis, zTest
@@ -39,11 +41,10 @@ freq = sinusoidal_upper_bound.sample()
 while freq :
     lower, upper = binary_search_sinus_freq(cfSimulation, zTest, ZAnalysis, \
                                             freq, delta_amp, max_amp, nl_max, data_directory)
-    print("At freq: {} upper: {} lower: {}".format(freq,upper,lower))
+    # print("At freq: {} upper: {} lower: {}".format(freq,upper,lower))
     sinusoidal_upper_bound.add_sample(freq, lower, upper) # add sample to threshold
     freq = sinusoidal_upper_bound.sample()
 print("Phase 1 done: I have sampled {} frequencies".format(sinusoidal_upper_bound.nlth.size))
-sinusoidal_upper_bound.plot()
 
 ####################################
 ### PHASE 2: test set generation ###
@@ -51,10 +52,19 @@ sinusoidal_upper_bound.plot()
 # INPUTS: shapes, f_min, f_max, nl_th
 # OUTPUT: a vector of (d,A) pairs for each shape
 
-# list of shapes
-# Shape type: ...
+test_set = []
 
 # generate testset
+i=0
+for s in zTest.shapes :
+    if not(s=='sinus') :
+        print('generating test set for shape: '+s)
+        test_set.append(shapeTestSet(zTest,s,sinusoidal_upper_bound,0.001))
+        test_set[i].generate_test_set()
+        test_set[i].plot_test_set()
+        i=i+1
+
+plt.show()
 
 ########################################################
 ### PHASE 3: Tests Execution & check of MRs on tests ###
