@@ -1,6 +1,7 @@
 import numpy as np
 import scipy.signal as signal
 import scipy.fft as fft
+import random as rnd
 import matplotlib.pyplot as plt
 
 '''
@@ -8,7 +9,9 @@ Class that takes a shape and generates the associated test set for
  a given estimation of the non-linearity threshold.
 '''
 
-peak_threshold_percentage = 0.05
+peak_threshold_percentage = 0.05 # used to identify relevant peaks in input spectrum
+num_tests = 50 # number of randomly generated tests
+scale_factor = 100 # used to scale random integers into floats for test case generation
 
 '''
 Class to store the frequency amplitude points of a given test
@@ -24,8 +27,7 @@ class faPointsTest(object):
             # for inputs that map too only one point. But this should
             # happen only for sinusoidal inputs that we should not be
             # considering at this stage
-            print("WARNING--faPointsTest: there is a non-sinusoidal test\
-                                          exciting only one frequency")
+            print("WARNING--faPointsTest: there is a non-sinusoidal test exciting only one frequency")
         self.z_ref_freq_peaks = z_ref_freq_peaks
         self.z_ref_amp_peaks  = z_ref_amp_peaks
 
@@ -62,19 +64,41 @@ class shapeTestSet(object):
 
         # This computation of the coefficient for the minimum and maximum frequency
         # and amplitude coefficients leverages the linearity of the Fourier Transform
-        faPt11 = self.get_test_coordinates(1,1)
+        self.faPt11 = self.get_test_coordinates(1,1)
         # Find upper-left point in input space
-        self.t_min = nlThreshold.f_min/faPt11.freq_of_max_amp()
-        self.a_max = nlThreshold.get_maximum_amp()/faPt11.a_Highest() #
+        self.t_scale_min = nlThreshold.f_min/self.faPt11.freq_of_max_amp()
+        self.a_gain_max = nlThreshold.get_maximum_amp()/self.faPt11.a_Highest() #
         # Find lower-right point in input space (a_min=0)
-        self.t_max = nlThreshold.f_max/faPt11.freq_of_max_amp()
+        self.t_scale_max = nlThreshold.f_max/self.faPt11.freq_of_max_amp()
 
     '''
     Generate the actual test set by sampling uniformly in the rectangular
-    range between the points [(t_min,a_max), (t_max,0)]
+    range between the points [(t_scale_min,a_gain_max), (t_scale_max,0)]
     '''
-    def generate_test_set():
-        pass
+    def generate_test_set(self):
+        # init test case variables
+        self.test_set_t_scale = np.zeros((num_tests))
+        self.test_set_a_gain  = np.zeros((num_tests))
+
+        # scale up float to integer
+        t_min = int(self.t_scale_min*scale_factor)
+        t_max = int(self.t_scale_max*scale_factor)+1
+        a_min = int(self.nlThreshold.delta_amp*scale_factor)+1
+        a_max = int( self.a_gain_max*scale_factor)+1
+        for i in range(0,num_tests) :
+            # random sampling on integers, then scaled down to get float
+            test_t_scale = rnd.randint(t_min,t_max)/scale_factor
+            test_a_gain  = rnd.randint(a_min,a_max)/scale_factor
+            test_f_main  = test_t_scale*self.faPt11.freq_of_max_amp()
+            # check if test fits under threshold, if not retry
+            while test_a_gain*self.faPt11.a_Highest()>self.nlThreshold.get_th_at_freq(test_f_main):
+                # random sampling on integers, then scaled down to get float
+                test_t_scale = rnd.randint(t_min,t_max)/scale_factor
+                test_a_gain  = rnd.randint(    0,a_max)/scale_factor
+                test_f_main  = test_t_scale*self.faPt11.freq_of_max_amp()
+            # store
+            self.test_set_t_scale[i] = np.array(test_t_scale)
+            self.test_set_a_gain[i]  = np.array(test_a_gain)
 
     '''
     Given a time scaling coefficient and an amplitude coefficient
@@ -132,4 +156,18 @@ class shapeTestSet(object):
     cases in this test set.
     '''
     def plot_test_set(self):
-        pass
+        # init figure for plotting
+        fig, axs = plt.subplots(1, 1)
+        axs.grid()
+        # axs.set_xlim([0, 7])
+        axs.set_ylim([0,5.1])
+        # plot frequency limits
+        axs.plot([self.nlThreshold.f_min,self.nlThreshold.f_min],[0,self.nlThreshold.get_maximum_amp()], linestyle='dashed', c='black')
+        axs.plot([self.nlThreshold.f_max,self.nlThreshold.f_max],[0,self.nlThreshold.get_maximum_amp()], linestyle='dashed', c='black')
+        # plot linearity upper bounds as from pre-estimation
+        axs.plot(self.nlThreshold.nlth['freq'],self.nlThreshold.nlth['A_min'])
+        axs.plot(self.nlThreshold.nlth['freq'],self.nlThreshold.nlth['A_max'])
+
+        for i in range(0,num_tests) :
+            faPt = self.get_test_coordinates(self.test_set_t_scale[i],self.test_set_a_gain[i])
+            axs.scatter(faPt.z_ref_freq_peaks[1:], faPt.z_ref_amp_peaks[1:], s=5)
