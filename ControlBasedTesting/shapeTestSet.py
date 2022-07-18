@@ -10,7 +10,6 @@ Class that takes a shape and generates the associated test set for
 '''
 
 peak_threshold_percentage = 0.05 # used to identify relevant peaks in input spectrum
-num_tests = 50 # number of randomly generated tests
 scale_factor = 100 # used to scale random integers into floats for test case generation
 
 '''
@@ -75,7 +74,7 @@ class shapeTestSet(object):
     Generate the actual test set by sampling uniformly in the rectangular
     range between the points [(t_scale_min,a_gain_max), (t_scale_max,0)]
     '''
-    def generate_test_set(self):
+    def generate_test_set(self, num_tests):
         # init test case variables
         self.test_set_t_scale = np.zeros((num_tests))
         self.test_set_a_gain  = np.zeros((num_tests))
@@ -83,19 +82,16 @@ class shapeTestSet(object):
         # scale up float to integer
         t_min = int(self.t_scale_min*scale_factor)
         t_max = int(self.t_scale_max*scale_factor)+1
-        a_min = int(self.nlThreshold.delta_amp*scale_factor)+1
-        a_max = int( self.a_gain_max*scale_factor)+1
+        a_min = self.nlThreshold.delta_amp
         for i in range(0,num_tests) :
             # random sampling on integers, then scaled down to get float
             test_t_scale = rnd.randint(t_min,t_max)/scale_factor
-            test_a_gain  = rnd.randint(a_min,a_max)/scale_factor
             test_f_main  = test_t_scale*self.faPt11.freq_of_max_amp()
-            # check if test fits under threshold, if not retry
-            while test_a_gain*self.faPt11.a_Highest()>self.nlThreshold.get_th_at_freq(test_f_main):
-                # random sampling on integers, then scaled down to get float
-                test_t_scale = rnd.randint(t_min,t_max)/scale_factor
-                test_a_gain  = rnd.randint(    0,a_max)/scale_factor
-                test_f_main  = test_t_scale*self.faPt11.freq_of_max_amp()
+            a_max = self.nlThreshold.get_th_at_freq(test_f_main)/self.faPt11.a_Highest()
+            if a_min>a_max :
+                print("ERROR shapeTestSet: a_min>a_max when generating test set for shape "+self.shape)
+            rand_coef = rnd.betavariate(5,3.5)
+            test_a_gain  = a_min + rand_coef*(a_max-a_min)
             # store
             self.test_set_t_scale[i] = np.array(test_t_scale)
             self.test_set_a_gain[i]  = np.array(test_a_gain)
@@ -148,8 +144,6 @@ class shapeTestSet(object):
         axs.scatter(faPt.z_ref_freq_peaks[1:], faPt.z_ref_amp_peaks[1:], s=10)
 
         axs.grid()
-        # axs.set_xlim([0, 50])
-        # axs.set_ylim([0,5.1])
 
     '''
     Plot the coordinates in the frequency-amplitude for all the test
@@ -159,9 +153,11 @@ class shapeTestSet(object):
         # init figure for plotting
         fig, axs = plt.subplots(1, 1)
         axs.grid()
+        axs.set_xscale('log')
+        axs.set_yscale('log')
         axs.title.set_text("Generated Test Set for Shape: "+self.shape)
-        # axs.set_xlim([0, 30])
-        axs.set_ylim([0,self.nlThreshold.get_maximum_amp()+0.2])
+        axs.set_xlim([self.nlThreshold.f_min/2, 30])
+        # axs.set_ylim([0,self.nlThreshold.get_maximum_amp()*2])
         # plot frequency limits
         axs.plot([self.nlThreshold.f_min,self.nlThreshold.f_min],[0,self.nlThreshold.get_maximum_amp()], linestyle='dashed', c='black')
         axs.plot([self.nlThreshold.f_max,self.nlThreshold.f_max],[0,self.nlThreshold.get_maximum_amp()], linestyle='dashed', c='black')
@@ -169,6 +165,6 @@ class shapeTestSet(object):
         axs.plot(self.nlThreshold.nlth['freq'],self.nlThreshold.nlth['A_min'])
         axs.plot(self.nlThreshold.nlth['freq'],self.nlThreshold.nlth['A_max'])
 
-        for i in range(0,num_tests) :
+        for i in range(0,len(self.test_set_t_scale)) :
             faPt = self.get_test_coordinates(self.test_set_t_scale[i],self.test_set_a_gain[i])
-            axs.scatter(faPt.z_ref_freq_peaks[1:], faPt.z_ref_amp_peaks[1:], s=5)
+            axs.scatter(faPt.z_ref_freq_peaks[1:5], faPt.z_ref_amp_peaks[1:5], s=5)

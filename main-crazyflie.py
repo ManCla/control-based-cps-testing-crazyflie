@@ -10,6 +10,8 @@ from CrazyflieSimulationPython.cfSimulator import cfSimulation, ZAnalysis, zTest
 
 data_directory = 'cfdata/'
 
+### TODO: set seed for random test generation ###
+
 #####################################################################
 ### PHASE 1: sinusoidal-based non-linearity threshold exploration ###
 #####################################################################
@@ -49,8 +51,10 @@ print("Phase 1 done: I have sampled {} frequencies".format(sinusoidal_upper_boun
 ####################################
 ### PHASE 2: test set generation ###
 ####################################
-# INPUTS: shapes, f_min, f_max, nl_th
-# OUTPUT: a vector of (d,A) pairs for each shape
+# INPUTS: shapes, f_min, f_max, nl_th, num_tests per shape
+# OUTPUT: a vector of length num_tests (d,A) pairs for each shape
+
+num_tests = 100 # number of randomly generated tests
 
 test_set = []
 
@@ -60,7 +64,7 @@ for s in zTest.shapes :
     if not(s=='sinus') :
         print('generating test set for shape: '+s)
         test_set.append(shapeTestSet(zTest,s,sinusoidal_upper_bound,0.001))
-        test_set[i].generate_test_set()
+        test_set[i].generate_test_set(num_tests)
         test_set[i].plot_test_set()
         i=i+1
 
