@@ -100,6 +100,31 @@ class NLthUpperbound():
                     self.maximum_amp = th['A_max']
         return self.maximum_amp
 
+    '''
+    return maximum amplitude accepted by upper bound
+    at a given frequency
+    '''
+    def get_th_at_freq(self, freq, silent=True) :
+        if (freq<self.f_min or freq>self.f_max) and not(silent) :
+            print("WARNING--NLthUpperbound.get_th_at_freq:\
+                   looking at {} which is out of freq range".format(freq))
+            return False
+        ### LINEAR SEARCH ###
+        # for i in range(len(self.nlth['freq'])) :
+        #     if self.nlth['freq'][i]>freq :
+        #         return max(self.nlth['A_max'][i], self.nlth['A_max'][i-1])
+        # return self.nlth['A_max'][-1]
+        ### BINARY SEARCH ###
+        start = 0
+        end = len(self.nlth['freq']) - 1
+        while end>(start+1) :
+            mid = (start + end) // 2
+            if(self.nlth['freq'][mid] > freq):
+                end = mid
+            else:
+                start = mid
+        return max(self.nlth['A_max'][end], self.nlth['A_max'][start])
+
 if __name__ == "__main__":
     nlth = NLthUpperbound(0.5, 0.5, 1, 5)
     print(nlth.sample()) # supposed to throw an error
