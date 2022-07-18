@@ -159,8 +159,9 @@ class shapeTestSet(object):
         # init figure for plotting
         fig, axs = plt.subplots(1, 1)
         axs.grid()
-        # axs.set_xlim([0, 7])
-        axs.set_ylim([0,5.1])
+        axs.title.set_text("Generated Test Set for Shape: "+self.shape)
+        # axs.set_xlim([0, 30])
+        axs.set_ylim([0,self.nlThreshold.get_maximum_amp()+0.2])
         # plot frequency limits
         axs.plot([self.nlThreshold.f_min,self.nlThreshold.f_min],[0,self.nlThreshold.get_maximum_amp()], linestyle='dashed', c='black')
         axs.plot([self.nlThreshold.f_max,self.nlThreshold.f_max],[0,self.nlThreshold.get_maximum_amp()], linestyle='dashed', c='black')
