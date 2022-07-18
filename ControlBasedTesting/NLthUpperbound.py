@@ -1,6 +1,5 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from CrazyflieSimulationPython.cfSimulator import ZAnalysis as fdh # just used for some plotting parameters
 
 '''
 Class to store and manage the upper-bound estimation
@@ -78,7 +77,6 @@ class NLthUpperbound():
         # 
         non_lin_fig , non_lin_ax = plt.subplots(1, 1)
         non_lin_fig.tight_layout()
-        non_lin_ax.grid(color=fdh.chosen_grid_color, linestyle=fdh.chosen_grid_linestyle, linewidth=fdh.chosen_grid_linewidth)
         plt.setp(non_lin_ax, xlabel=x_label, ylabel=y_label)
         non_lin_ax.set_xscale('log')
         non_lin_ax.set_yscale('log')
@@ -103,11 +101,14 @@ class NLthUpperbound():
         return self.maximum_amp
 
 if __name__ == "__main__":
-    a = NLthUpperbound(0.5, 1, 5)
-    print(a.sample())
-    a.add_sample(1.5,4,5)
-    a.add_sample(2.5,3,4)
-    a.add_sample(2.25,3.5,4.5)
-    a.add_sample(3.25,3.5,4.5)
-    a.add_sample(4,4,5)
-    print(a.sample())
+    nlth = NLthUpperbound(0.5, 0.5, 1, 5)
+    print(nlth.sample()) # supposed to throw an error
+    nlth.add_sample(1,    4,   5)
+    nlth.add_sample(1.5,  4,   5)
+    nlth.add_sample(2.5,  3.5, 4.5)
+    nlth.add_sample(2.25, 3,   4)
+    nlth.add_sample(3.25, 2.5, 2.6)
+    nlth.add_sample(4,    3,   3.5)
+    nlth.add_sample(5,    0.9, 1)
+    nlth.plot()
+    print(nlth.nlth)
