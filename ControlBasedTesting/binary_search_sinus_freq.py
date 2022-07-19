@@ -34,4 +34,7 @@ def binary_search_sinus_freq(Simulator, TestCase, TestData, \
             lower = amp          # below this everything should be linear
         amp = (upper+lower)/2    # binary search
 
-    return lower, upper
+    # this final normalization makes the threshold usable across shapes
+    # NOTE: test_data.get_z_ref_fft_peaks()[1] is always the max in sinus tests
+    fft_amp_ratio = amp/test_data.get_z_ref_fft_peaks()[1]
+    return lower/fft_amp_ratio, upper/fft_amp_ratio
