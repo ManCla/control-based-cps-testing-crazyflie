@@ -39,8 +39,7 @@ class NLthUpperbound():
             print("WARNING--NLthUpperbound: trying to add the same frequency twice")
             return
 
-        # 
-        for i, th in enumerate(self.nlth) :
+        for i, th in enumerate(self.nlth) : # TODO: implement as binary search, not linear
             if frequency<th['freq'] :
                 self.nlth = np.insert(self.nlth, i, [(frequency, amplitude_min, amplitude_max)])
                 return
