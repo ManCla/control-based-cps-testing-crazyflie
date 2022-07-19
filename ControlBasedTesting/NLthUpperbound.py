@@ -80,6 +80,7 @@ class NLthUpperbound():
         non_lin_ax.set_xscale('log')
         non_lin_ax.set_yscale('log')
         # non_lin_ax.set_ylim(0,6.3)
+        non_lin_ax.grid()
         non_lin_ax.set_xlim(self.f_min,self.f_max)
         non_lin_ax.title.set_text("Upper Bound of non-linear threshold retrieved from sinusoidal tests")
 
