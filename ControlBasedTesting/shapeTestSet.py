@@ -86,6 +86,7 @@ class shapeTestSet(object):
             # random sampling on integers, then scaled down to get float
             test_t_scale = rnd.randint(t_min,t_max)/scale_factor
             test_f_main  = test_t_scale*self.faPt11.freq_of_max_amp()
+            # get threshold and rescale for this specific shape
             a_max = self.nlThreshold.get_th_at_freq(test_f_main)/self.faPt11.a_Highest()
             if a_min>a_max :
                 print("ERROR shapeTestSet: a_min>a_max when generating test set for shape "+self.shape)
