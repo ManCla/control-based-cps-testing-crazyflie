@@ -42,7 +42,8 @@ lower, upper = binary_search_sinus_freq(cfSimulation, zTest, ZAnalysis, \
 sinusoidal_upper_bound.add_sample(f_max, lower, upper) # add sample to threshold
 
 freq = sinusoidal_upper_bound.sample()
-while freq :
+while freq : # iteration over frequency axis
+    # this function call implements the search along the amplitude axis
     lower, upper = binary_search_sinus_freq(cfSimulation, zTest, ZAnalysis, \
                                             freq, delta_amp, max_amp, nl_max, data_directory)
     # print("At freq: {} upper: {} lower: {}".format(freq,upper,lower))
@@ -65,6 +66,7 @@ i=0
 for s in zTest.shapes :
     if not(s=='sinus') : # we are not interested in sinus test cases at this step
         print('generating test set for shape: '+s)
+        # TODO: dt should not be hardcoded
         test_set.append(shapeTestSet(zTest,s,sinusoidal_upper_bound,0.001))
         rnd.seed(10000000*i) # seed is set here so that tests for each shape can be recycled
                              # when we increase the number of tests per shape
