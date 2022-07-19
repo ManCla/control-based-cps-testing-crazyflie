@@ -123,8 +123,8 @@ class NLthUpperbound():
                 end = mid
             else:
                 start = mid
-        # here we use A_min to be a bit conservative
-        return max(self.nlth['A_min'][end], self.nlth['A_min'][start])
+        # here we use A_min to be on the safe side
+        return min(self.nlth['A_min'][end], self.nlth['A_min'][start])
 
 if __name__ == "__main__":
     nlth = NLthUpperbound(0.5, 0.5, 1, 5)
