@@ -57,7 +57,7 @@ print("Phase 1 done: I have sampled {} frequencies".format(sinusoidal_upper_boun
 # INPUTS: shapes, f_min, f_max, nl_th, num_tests per shape
 # OUTPUT: a vector of length num_tests (d,A) pairs for each shape
 
-num_tests = 2 # number of randomly generated tests per shape
+num_tests = 40 # number of randomly generated tests per shape
 
 test_set = []
 
