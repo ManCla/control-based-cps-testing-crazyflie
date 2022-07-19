@@ -85,8 +85,7 @@ for s in zTest.shapes :
 i=0
 for s in zTest.shapes :      ## iterate over shapes
     if not(s=='sinus') :     # we do not want to run sinus test cases at this step
-        for test in test_set[i].test_cases : ## iterate over
-            #
+        for test in test_set[i].test_cases : ## iterate over test cases
             print("Running test: Shape: {} Amp_scale: {} Time_scale: {}".format(s,test['a_gain'],test['t_scale']))
             test_input = zTest(s,test['a_gain'],test['t_scale'])
             file_path = data_directory+s+'-'+str(test['a_gain'])+'-'+str(test['t_scale'])
@@ -95,7 +94,7 @@ for s in zTest.shapes :      ## iterate over shapes
                 result = sut.run(test_input)       # test execution
                 result.save(name=file_path)
             else :
-                print("test already executed: "+file_path)
+                print("-> test already executed: "+file_path)
         i=i+1
 
 # check MRs

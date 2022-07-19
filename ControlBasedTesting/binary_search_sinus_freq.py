@@ -7,7 +7,7 @@ def binary_search_sinus_freq(Simulator, TestCase, TestData, \
                              freq, delta_amp, max_amp, nl_max, data_directory,\
                              silent=True):
     nl_deg = 1       # initialize non-linear degree
-    amp    = max_amp # initialize amplitude search
+    amp    = max_amp # initialize amplitude search TODO: should be max_amp/2
     lower  = 0       # search lower bound
     upper  = max_amp # search upper bound
 
