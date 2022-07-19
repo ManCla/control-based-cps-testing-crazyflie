@@ -97,7 +97,18 @@ for s in zTest.shapes :      ## iterate over shapes
                 print("-> test already executed: "+file_path)
         i=i+1
 
-# check MRs
+# the results of the tests can be plotted on the frequency-amplitude
+# plane with the plot-ztests-fft.py script
+
+# check MRs:
+# 1. filtering frequencies have to be higher than good tracking frequencies,
+# 2. non-linear degree should only increase for higher amplitudes, and
+# 3. we expect a monotonic decrease in the accepted amplitudes when 
+#    the frequency increases.
+
+# iterate over shapes
+#    iterate over pairs of tests (this is computationally heavy)
+#        check if MRs apply
 
 #############################################################
 ### PHASE 4: Aggregate Results and Build Characterization ###
