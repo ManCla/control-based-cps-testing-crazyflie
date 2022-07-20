@@ -102,15 +102,28 @@ for i, s in enumerate(zTest.shapes) :      ## iterate over shapes
 # the results of the tests can be plotted on the frequency-amplitude
 # plane with the plot-ztests-fft.py script
 
-# check MRs:
+# check MRs (plot sanity checks):
 # 1. filtering frequencies have to be higher than good tracking frequencies,
 # 2. non-linear degree should only increase for higher amplitudes, and
 # 3. we expect a monotonic decrease in the accepted amplitudes when 
 #    the frequency increases.
 
 # iterate over shapes
-#    iterate over pairs of tests (this is computationally heavy)
-#        check if MRs apply
+for i,s in enumerate(zTest.shapes) :
+    if not(s=='sinus') :     # sinus tests are handled differently since the test set
+                             # was built for the threshold upper bounding rather than
+                             # the sampling of the space
+        print(" --- Sanity Check of "+s+" tests --- ")
+        # iterate over pairs of tests (this is computationally heavy)
+        for ii,test in enumerate(test_set[i].test_cases) : ## iterate over test cases
+            # check if MRs apply
+            test_file = s+'-'+str(test['a_gain'])+'-'+str(test['t_scale'])
+            if not(exists(data_directory+test_file)) : # check if we find test file
+                print("WARNING -- main-crazyflie : couldn't find test: "+test_file)
+            for test2 in test_set[i].test_cases[(ii+1):] :
+                test2_file = s+'-'+str(test2['a_gain'])+'-'+str(test2['t_scale'])
+                if not(exists(data_directory+test2_file)) : # check if we find test file
+                    print("WARNING -- main-crazyflie : couldn't find test: "+test2_file)
 
 #############################################################
 ### PHASE 4: Aggregate Results and Build Characterization ###
