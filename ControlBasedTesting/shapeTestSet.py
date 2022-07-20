@@ -91,6 +91,7 @@ class shapeTestSet(object):
             if a_min>a_max :
                 print("ERROR shapeTestSet: a_min>a_max when generating test set for shape "+self.shape)
             rand_coef = rnd.betavariate(5,3.5) # TODO: study better beta distribution parameters
+                                               # (2,1) gives a "ramp" distribution
             test_a_gain  = a_min + rand_coef*(a_max-a_min)
             # store
             self.test_cases = np.append(self.test_cases,np.array((test_t_scale, test_a_gain),\
