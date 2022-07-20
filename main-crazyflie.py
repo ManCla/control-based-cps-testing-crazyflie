@@ -62,17 +62,21 @@ num_tests = 40 # number of randomly generated tests per shape
 test_set = []
 
 # generate testset
-i=0
-for s in zTest.shapes :
+j=0 # counter for backward compatibility with previously run tests
+for i, s in enumerate(zTest.shapes) :
     if not(s=='sinus') : # we are not interested in sinus test cases at this step
         print('generating test set for shape: '+s)
         # TODO: dt should not be hardcoded
         test_set.append(shapeTestSet(zTest,s,sinusoidal_upper_bound,0.001))
-        rnd.seed(10000000*i) # seed is set here so that tests for each shape can be recycled
+        rnd.seed(10000000*j) # seed is set here so that tests for each shape can be recycled
                              # when we increase the number of tests per shape
         test_set[i].generate_test_set(num_tests)
         # test_set[i].plot_test_set()
-        i=i+1
+        j = j+1
+    else :
+        # just for consistency of vector but we don't really
+        # want to generate more sinus test cases
+        test_set.append(shapeTestSet(zTest,s,sinusoidal_upper_bound,0.001))
 
 # plt.show()
 
@@ -82,8 +86,7 @@ for s in zTest.shapes :
 # INPUTS: test set
 # OUTPUT: frequency-amplitude points and associated behaviour
 
-i=0
-for s in zTest.shapes :      ## iterate over shapes
+for i, s in enumerate(zTest.shapes) :      ## iterate over shapes
     if not(s=='sinus') :     # we do not want to run sinus test cases at this step
         for test in test_set[i].test_cases : ## iterate over test cases
             print("Running test: Shape: {} Amp_scale: {} Time_scale: {}".format(s,test['a_gain'],test['t_scale']))
@@ -95,7 +98,6 @@ for s in zTest.shapes :      ## iterate over shapes
                 result.save(name=file_path)
             else :
                 print("-> test already executed: "+file_path)
-        i=i+1
 
 # the results of the tests can be plotted on the frequency-amplitude
 # plane with the plot-ztests-fft.py script
