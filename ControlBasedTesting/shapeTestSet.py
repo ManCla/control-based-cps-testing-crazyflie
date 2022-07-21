@@ -75,14 +75,14 @@ class shapeTestSet(object):
     Generate the actual test set by sampling uniformly in the rectangular
     range between the points [(t_scale_min,a_gain_max), (t_scale_max,0)]
     '''
-    def generate_test_set(self, num_tests):
+    def generate_test_set(self, num_freqs, num_amps):
         # init test case variables
         self.test_cases = np.array([], dtype=test_type)
         # scale up float to integer
         t_min = int(self.t_scale_min*scale_factor)
         t_max = int(self.t_scale_max*scale_factor)+1
         a_min = self.nlThreshold.delta_amp
-        for i in range(0,num_tests) :
+        for i in range(0,num_freqs) :
             # random sampling on integers, then scaled down to get float
             test_t_scale = rnd.randint(t_min,t_max)/scale_factor
             test_f_main  = test_t_scale*self.faPt11.freq_of_max_amp()
@@ -90,12 +90,13 @@ class shapeTestSet(object):
             a_max = self.nlThreshold.get_th_at_freq(test_f_main)/self.faPt11.a_Highest()
             if a_min>a_max :
                 print("ERROR shapeTestSet: a_min>a_max when generating test set for shape "+self.shape)
-            rand_coef = rnd.betavariate(5,3.5) # TODO: study better beta distribution parameters
-                                               # (2,1) gives a "ramp" distribution
-            test_a_gain  = a_min + rand_coef*(a_max-a_min)
-            # store
-            self.test_cases = np.append(self.test_cases,np.array((test_t_scale, test_a_gain),\
-                                      dtype=test_type))
+            for ii in range(0,num_amps):
+                rand_coef = rnd.betavariate(5,0.8) # TODO: study better beta distribution parameters
+                                                   # (2,1) gives a "ramp" distribution
+                test_a_gain  = a_min + rand_coef*(a_max-a_min)
+                # store
+                self.test_cases = np.append(self.test_cases,np.array((test_t_scale, test_a_gain),\
+                                          dtype=test_type))
 
     '''
     Given a time scaling coefficient and an amplitude coefficient
