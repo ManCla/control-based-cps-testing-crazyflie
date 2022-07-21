@@ -57,22 +57,21 @@ print("Phase 1 done: I have sampled {} frequencies".format(sinusoidal_upper_boun
 # INPUTS: shapes, f_min, f_max, nl_th, num_tests per shape
 # OUTPUT: a vector of length num_tests (d,A) pairs for each shape
 
-num_tests = 40 # number of randomly generated tests per shape
+num_freqs = 40 # number of frequencies sampled per shape
+num_amps  = 15 # number of amplitudes sampled per frequencies per shapes
 
 test_set = []
 
+rnd.seed(1) # seed for repeatibility
+
 # generate testset
-j=0 # counter for backward compatibility with previously run tests
 for i, s in enumerate(zTest.shapes) :
     if not(s=='sinus') : # we are not interested in sinus test cases at this step
         print('generating test set for shape: '+s)
         # TODO: dt should not be hardcoded
         test_set.append(shapeTestSet(zTest,s,sinusoidal_upper_bound,0.001))
-        rnd.seed(10000000*j) # seed is set here so that tests for each shape can be recycled
-                             # when we increase the number of tests per shape
-        test_set[i].generate_test_set(num_tests)
+        test_set[i].generate_test_set(num_freqs, num_amps)
         # test_set[i].plot_test_set()
-        j = j+1
     else :
         # just for consistency of vector but we don't really
         # want to generate more sinus test cases
