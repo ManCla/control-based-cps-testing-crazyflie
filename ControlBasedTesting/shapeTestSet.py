@@ -75,19 +75,20 @@ class shapeTestSet(object):
     Generate the actual test set by sampling uniformly in the rectangular
     range between the points [(t_scale_min,a_gain_max), (t_scale_max,0)]
     '''
-    def generate_test_set(self, num_freqs, num_amps):
+    def generate_test_set(self, freqs_under_test):
         # init test case variables
         self.test_cases = np.array([], dtype=test_type)
         # scale up float to integer
         t_min = int(self.t_scale_min*scale_factor)
         t_max = int(self.t_scale_max*scale_factor)+1
         a_min = self.nlThreshold.delta_amp
-        for i in range(0,num_freqs) :
+        for i,f in enumerate(freqs_under_test) :
             # random sampling on integers, then scaled down to get float
-            test_t_scale = rnd.randint(t_min,t_max)/scale_factor
-            test_f_main  = test_t_scale*self.faPt11.freq_of_max_amp()
+            test_t_scale = f/self.faPt11.freq_of_max_amp()
             # get threshold and rescale for this specific shape
-            a_max = self.nlThreshold.get_th_at_freq(test_f_main)/self.faPt11.a_Highest()
+            a_max = self.nlThreshold.get_th_at_freq(f)/self.faPt11.a_Highest()
+            num_amps = int(self.nlThreshold.get_th_at_freq(f)/self.nlThreshold.delta_amp)
+            print("I am going to sample {} amplitudes for freq {}".format(num_amps,f))
             if a_min>a_max :
                 print("ERROR shapeTestSet: a_min>a_max when generating test set for shape "+self.shape)
             for ii in range(0,num_amps):
