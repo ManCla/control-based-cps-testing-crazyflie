@@ -126,6 +126,13 @@ class NLthUpperbound():
         # here we use A_min to be on the safe side
         return min(self.nlth['A_min'][end], self.nlth['A_min'][start])
 
+    '''
+    return minimum gap between two frequencies sampled in the
+    upper-bounding of the non-linearity threshold.
+    '''
+    def get_freq_resolution(self) :
+        return min([self.nlth['freq'][i+1]-self.nlth['freq'][i] for i in range(len(self.nlth)-1)])
+
 if __name__ == "__main__":
     nlth = NLthUpperbound(0.5, 0.5, 1, 5)
     print(nlth.sample()) # supposed to throw an error
@@ -136,5 +143,5 @@ if __name__ == "__main__":
     nlth.add_sample(3.25, 2.5, 2.6)
     nlth.add_sample(4,    3,   3.5)
     nlth.add_sample(5,    0.9, 1)
+    print("frequency resolution: "+str(nlth.get_freq_resolution()))
     nlth.plot()
-    print(nlth.nlth)
