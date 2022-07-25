@@ -82,6 +82,8 @@ for i, s in enumerate(zTest.shapes) :
         test_set.append(shapeTestSet(zTest,s,sinusoidal_upper_bound,0.001))
 
 # plt.show()
+print("Phase 2 done: I have generated {} test cases for {} shapes".\
+      format(len(test_set[0].test_cases),len(test_set))
 
 ########################################################
 ### PHASE 3: Tests Execution & check of MRs on tests ###
