@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt # for plotting
 import random as rnd            # for setting the seed of the random generator
 from os.path import exists      # to check if test has already been performed
+import numpy as np
 
 # utilities of testing approach
 from ControlBasedTesting.binary_search_sinus_freq import binary_search_sinus_freq
@@ -57,8 +58,11 @@ print("Phase 1 done: I have sampled {} frequencies".format(sinusoidal_upper_boun
 # INPUTS: shapes, f_min, f_max, nl_th, num_tests per shape
 # OUTPUT: a vector of length num_tests (d,A) pairs for each shape
 
-num_freqs = 40 # number of frequencies sampled per shape
-num_amps  = 15 # number of amplitudes sampled per frequencies per shapes
+# uniform sampling of frequencies
+num_freqs = int((f_max-f_min)/sinusoidal_upper_bound.get_freq_resolution())
+freqs_under_test = np.linspace(f_min,f_max,num=num_freqs)
+print("desired frequency resolution seems to be {}. Will sample {} freqs for each shape".format\
+     (sinusoidal_upper_bound.get_freq_resolution(),num_freqs))
 
 test_set = []
 
@@ -70,7 +74,7 @@ for i, s in enumerate(zTest.shapes) :
         print('generating test set for shape: '+s)
         # TODO: dt should not be hardcoded
         test_set.append(shapeTestSet(zTest,s,sinusoidal_upper_bound,0.001))
-        test_set[i].generate_test_set(num_freqs, num_amps)
+        test_set[i].generate_test_set(freqs_under_test)
         # test_set[i].plot_test_set()
     else :
         # just for consistency of vector but we don't really
