@@ -127,11 +127,17 @@ class NLthUpperbound():
         return min(self.nlth['A_min'][end], self.nlth['A_min'][start])
 
     '''
-    return minimum gap between two frequencies sampled in the
+    return average gap between two frequencies sampled in the
     upper-bounding of the non-linearity threshold.
     '''
     def get_freq_resolution(self) :
-        return min([self.nlth['freq'][i+1]-self.nlth['freq'][i] for i in range(len(self.nlth)-1)])
+        return np.average([self.nlth['freq'][i+1]-self.nlth['freq'][i] for i in range(len(self.nlth)-1)])
+
+    '''
+    return the vector of sampled frequencies
+    '''
+    def get_freq_vector(self) :
+        return self.nlth['freq']
 
 if __name__ == "__main__":
     nlth = NLthUpperbound(0.5, 0.5, 1, 5)
