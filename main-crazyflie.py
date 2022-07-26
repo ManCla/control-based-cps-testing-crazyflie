@@ -93,6 +93,7 @@ print("Phase 2 done: I have generated {} test cases for {} shapes".\
 
 for i, s in enumerate(zTest.shapes) :      ## iterate over shapes
     if not(s=='sinus') :     # we do not want to run sinus test cases at this step
+        print("Phase 3: running tests for shape {}".format(s))
         for test in test_set[i].test_cases : ## iterate over test cases
             print("Running test: Shape: {} Amp_scale: {} Time_scale: {}".format(s,test['a_gain'],test['t_scale']))
             test_input = zTest(s,test['a_gain'],test['t_scale'])
