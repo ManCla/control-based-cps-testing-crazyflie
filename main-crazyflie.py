@@ -83,7 +83,7 @@ for i, s in enumerate(zTest.shapes) :
 
 # plt.show()
 print("Phase 2 done: I have generated {} test cases for {} shapes".\
-      format(len(test_set[0].test_cases),len(test_set))
+      format(len(test_set[0].test_cases),len(test_set)))
 
 ########################################################
 ### PHASE 3: Tests Execution & check of MRs on tests ###
