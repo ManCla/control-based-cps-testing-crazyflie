@@ -32,6 +32,8 @@ if __name__ == "__main__":
     non_lin_ax_shapes[2].title.set_text("Non Linear Degree Trapezoidal")
     non_lin_ax_shapes[3].title.set_text("Non Linear Degree Sinus")
     non_lin_ax_shapes[4].title.set_text("Non Linear Degree User-Defined")
+    non_lin_ax_shapes[5].title.set_text("Non Linear Degree Impulse")
+    non_lin_ax_shapes[6].title.set_text("Non Linear Degree Ramp")
 
     # figure with all tests together
     non_lin_fig , non_lin_ax = plt.subplots(1, 1)
@@ -60,6 +62,8 @@ if __name__ == "__main__":
     filter_ax_shapes[2].title.set_text("Filtering Degree Trapezoidal")
     filter_ax_shapes[3].title.set_text("Filtering Degree Sinus")
     filter_ax_shapes[4].title.set_text("Filtering Degree User-Defined")
+    filter_ax_shapes[5].title.set_text("Filtering Degree Impulse")
+    filter_ax_shapes[6].title.set_text("Filtering Degree Ramp")
 
     # figure with all tests together
     filter_fig , filter_ax = plt.subplots(1, 1)
@@ -95,6 +99,10 @@ if __name__ == "__main__":
             plot_index = 3
         elif data_storage.test=="ud1" :
             plot_index = 4
+        elif data_storage.test=="impulse" :
+            plot_index = 5
+        elif data_storage.test=="ramp" :
+            plot_index = 6
         else :
             print("ERROR: Shape not recognized {}".format(data_storage.test))
             exit()
