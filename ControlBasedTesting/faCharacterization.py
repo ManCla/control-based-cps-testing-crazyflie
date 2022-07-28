@@ -1,5 +1,5 @@
 import numpy as np # for structured arrays
-import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt # for plotting
 
 '''
 Class that contains the frequency amplitude characterization
@@ -113,14 +113,15 @@ class faCharacterization():
             # plot linearity upper bounds as from pre-estimation
             axs.plot(nlth.nlth['freq'],nlth.nlth['A_min'])
             axs.plot(nlth.nlth['freq'],nlth.nlth['A_max'])
-        
+        # plot aesthetics
         axs.set_xscale('log')
         axs.set_yscale('log')
+        axs.grid()
 
         nldg_colours = [get_nldg_colour(x) for x in self.faPoints['deg_non_lin']]
         axs.scatter(self.faPoints['freq'], self.faPoints['amp'], s=2, c=nldg_colours)
 
-        axs.grid()
+        return axs # used for adding more elements to the plot
 
     '''
     plot filtering characterization
@@ -135,16 +136,21 @@ class faCharacterization():
             # plot linearity upper bounds as from pre-estimation
             axs.plot(nlth.nlth['freq'],nlth.nlth['A_min'])
             axs.plot(nlth.nlth['freq'],nlth.nlth['A_max'])
-        
+        # plot aesthetics
         axs.set_xscale('log')
         axs.set_yscale('log')
+        axs.grid()
 
         # TODO: exclude points associated to non-linear behaviour
         print("TODO: exclude points associated to non-linear behaviour from filtering plot")
         dof_colours = [get_filtering_colour(x) for x in self.faPoints['deg_filtering']]
         axs.scatter(self.faPoints['freq'], self.faPoints['amp'], s=2, c=dof_colours)
 
-        axs.grid()
+        return axs # used for adding more elements to the plot
+
+    def check_input(self, freqs, amps, nlth=0) :
+        axs = self.plot_non_linearity_characterization(nlth=nlth)
+        axs.scatter(freqs, amps, s=25, c='black', marker="P")        
 
 if __name__ == "__main__":
     charact = faCharacterization()
