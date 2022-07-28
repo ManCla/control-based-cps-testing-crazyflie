@@ -20,7 +20,7 @@ if __name__ == "__main__":
     #################################
 
     # figure with separated different types of tests
-    non_lin_fig_shapes , non_lin_ax_shapes  = plt.subplots(5, 1, sharex=True, sharey=True)
+    non_lin_fig_shapes , non_lin_ax_shapes  = plt.subplots(7, 1, sharex=True, sharey=True)
     non_lin_fig_shapes.tight_layout()
     non_lin_fig_shapes.supxlabel(x_label)
     non_lin_fig_shapes.supylabel(y_label)
@@ -50,7 +50,7 @@ if __name__ == "__main__":
     #################################
     
     # figure with separated different types of tests
-    filter_fig_shapes , filter_ax_shapes  = plt.subplots(5, 1, sharex=True, sharey=True)
+    filter_fig_shapes , filter_ax_shapes  = plt.subplots(7, 1, sharex=True, sharey=True)
     filter_fig_shapes.tight_layout()
     filter_fig_shapes.supxlabel(x_label)
     filter_fig_shapes.supylabel(y_label)
