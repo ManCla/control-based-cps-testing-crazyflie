@@ -122,8 +122,7 @@ if __name__ == "__main__":
             # gradient from yellow to red
             non_lin_color = [[1,2*(0.5-(nld-0.5)),0]] * len(freq_coordinates) # transform into rgb colour
         non_lin_ax_shapes[plot_index].scatter(freq_coordinates, ampl_coordinates, marker='o',s=2,c=non_lin_color)
-        if not(plot_index==4) :
-            non_lin_ax.scatter(freq_coordinates, ampl_coordinates, marker='o',s=2,c=non_lin_color)
+        non_lin_ax.scatter(freq_coordinates, ampl_coordinates, marker='o',s=2,c=non_lin_color)
 
         ### FILTERING DEGREE
         # note: this is a measure for each of the peaks of the input
@@ -134,7 +133,6 @@ if __name__ == "__main__":
             # colour for degree of filtering
             filter_color = [ [0,min(x,1),1-min(x,1)] for x in data_storage.get_z_filter_degree()]
         filter_ax_shapes[plot_index].scatter(freq_coordinates, ampl_coordinates, marker='o',s=2,c=filter_color)
-        if not(plot_index==4) :
-            filter_ax.scatter(freq_coordinates, ampl_coordinates, marker='o',s=2,c=filter_color)
+        filter_ax.scatter(freq_coordinates, ampl_coordinates, marker='o',s=2,c=filter_color)
 
     plt.show()
