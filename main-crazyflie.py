@@ -149,9 +149,16 @@ for i,s in enumerate(zTest.shapes) :
 # INPUTS: frequency-amplitude behaviour points
 # OUTPUT: frequency-amplitude characterization
 
+# Use this to store a characterization object and ease the
+# checking of other inputs. See also script check_inputs.py
+#
+# faCharact.save()
+
+# plot obtained characterization
 faCharact.plot_non_linearity_characterization(nlth=sinusoidal_upper_bound)
 faCharact.plot_filtering_characterization(nlth=sinusoidal_upper_bound)
 plt.show()
+
 # aggregate results
 
 # check MRs
