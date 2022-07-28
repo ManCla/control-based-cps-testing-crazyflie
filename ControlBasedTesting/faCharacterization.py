@@ -150,7 +150,7 @@ class faCharacterization():
 
     def check_input(self, freqs, amps, nlth=0) :
         axs = self.plot_non_linearity_characterization(nlth=nlth)
-        axs.scatter(freqs, amps, s=25, c='black', marker="P")        
+        axs.scatter(freqs, amps, s=25, c='black', marker="P")
 
 if __name__ == "__main__":
     charact = faCharacterization()
