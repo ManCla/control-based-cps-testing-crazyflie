@@ -1,5 +1,7 @@
 import numpy as np # for structured arrays
 import matplotlib.pyplot as plt # for plotting
+import pickle as pk # for saving object
+import time # for naming of data-files to save
 
 '''
 Class that contains the frequency amplitude characterization
@@ -16,6 +18,8 @@ Note that the class is about the individual points rather than the tests!
 E.g. when plotting you don't need to iterate over both tests and points,
 but you can just iterate over the points.
 '''
+
+date_format    = '%Y%m%d_%H%M%S'
 
 ###################
 ### LOCAL TYPES ###
@@ -62,14 +66,26 @@ class faCharacterization():
     '''
     save object containing current characterization
     '''
-    def store() :
-        pass
+    def save(self, name="no-name"):
+        if name=="no-name" :
+            # saves itself to file named as current date and time
+            filename = time.strftime(date_format, time.localtime())
+        else :
+            # if provided, save with custom filename
+            filename = name 
+        filename = "characterization-"+filename
+        with open(filename, "wb") as f:
+            pk.dump(self, f, protocol=pk.HIGHEST_PROTOCOL)
 
     '''
     open file containing characterization of interest
     '''
-    def open() :
-        pass
+    def open(data_location, silent=False):
+        with open(data_location, 'rb') as f:
+            data = pk.load(f)
+        if not(silent):
+            print('Read data from file: \033[4m' + data_location + '\033[0m')
+        return data
 
     '''
     add a set of points coming from the same test
