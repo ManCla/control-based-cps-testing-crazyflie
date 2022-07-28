@@ -149,7 +149,8 @@ for i,s in enumerate(zTest.shapes) :
 # INPUTS: frequency-amplitude behaviour points
 # OUTPUT: frequency-amplitude characterization
 
-faCharact.plot_characterization(nlth=sinusoidal_upper_bound)
+faCharact.plot_non_linearity_characterization(nlth=sinusoidal_upper_bound)
+faCharact.plot_filtering_characterization(nlth=sinusoidal_upper_bound)
 plt.show()
 # aggregate results
 

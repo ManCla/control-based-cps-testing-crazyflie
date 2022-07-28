@@ -11,7 +11,15 @@ from all of the tests: for each point we have
  - degree of non-linearity
  - test that was used to sample the point 
    (shape, amplitude_gain and time_scaling)
+
+Note that the class is about the individual points rather than the tests!
+E.g. when plotting you don't need to iterate over both tests and points,
+but you can just iterate over the points.
 '''
+
+###################
+### LOCAL TYPES ###
+###################
 
 # NOTE: shape names are assumed to be strings no longer than 20 characters
 faPoint_type = np.dtype([('freq', 'f4'),\
@@ -22,6 +30,10 @@ faPoint_type = np.dtype([('freq', 'f4'),\
                          ('t_scale', 'f4'),\
                          ('a_gain', 'f4')
                         ])
+
+#######################
+### LOCAL FUNCTIONS ###
+#######################
 
 # local function to get colour associated to non-linear degree.
 # defines staining colours of non-linearity plot
@@ -35,6 +47,12 @@ def get_nldg_colour(nldg) :
         non_lin_color = [1,2*(0.5-(nldg-0.5)),0] # transform into rgb colour
     return non_lin_color
 
+# local function to get colour associated to non-linear degree.
+# defines staining colours of non-linearity plot
+def get_filtering_colour(dof) :
+    dof_sat = min(dof,1)
+    filter_color = [0,dof_sat,1-dof_sat]
+    return filter_color
 
 class faCharacterization():
     
@@ -83,9 +101,9 @@ class faCharacterization():
         pass
 
     '''
-    plot characterization
+    plot non-linearity characterization
     '''
-    def plot_characterization(self, nlth=0) :
+    def plot_non_linearity_characterization(self, nlth=0) :
         
         fig, axs = plt.subplots(1, 1)
         if not(nlth==0) : # if sinusoidal based threshold is provided, use it to plot target area
@@ -101,6 +119,30 @@ class faCharacterization():
 
         nldg_colours = [get_nldg_colour(x) for x in self.faPoints['deg_non_lin']]
         axs.scatter(self.faPoints['freq'], self.faPoints['amp'], s=2, c=nldg_colours)
+
+        axs.grid()
+
+    '''
+    plot filtering characterization
+    '''
+    def plot_filtering_characterization(self, nlth=0) :
+        
+        fig, axs = plt.subplots(1, 1)
+        if not(nlth==0) : # if sinusoidal based threshold is provided, use it to plot target area
+            # plot frequency limits
+            axs.plot([nlth.f_min,nlth.f_min],[0,nlth.get_maximum_amp()], linestyle='dashed', c='black')
+            axs.plot([nlth.f_max,nlth.f_max],[0,nlth.get_maximum_amp()], linestyle='dashed', c='black')
+            # plot linearity upper bounds as from pre-estimation
+            axs.plot(nlth.nlth['freq'],nlth.nlth['A_min'])
+            axs.plot(nlth.nlth['freq'],nlth.nlth['A_max'])
+        
+        axs.set_xscale('log')
+        axs.set_yscale('log')
+
+        # TODO: exclude points associated to non-linear behaviour
+        print("TODO: exclude points associated to non-linear behaviour from filtering plot")
+        dof_colours = [get_filtering_colour(x) for x in self.faPoints['deg_filtering']]
+        axs.scatter(self.faPoints['freq'], self.faPoints['amp'], s=2, c=dof_colours)
 
         axs.grid()
 
