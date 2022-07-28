@@ -7,6 +7,7 @@ import numpy as np
 from ControlBasedTesting.binary_search_sinus_freq import binary_search_sinus_freq
 from ControlBasedTesting.NLthUpperbound import NLthUpperbound
 from ControlBasedTesting.shapeTestSet import shapeTestSet
+from ControlBasedTesting.faCharacterization import faCharacterization
 
 # for Crazyflie Testing
 from CrazyflieSimulationPython.cfSimulator import cfSimulation, ZAnalysis, zTest
@@ -91,6 +92,9 @@ print("Phase 2 done: I have generated {} test cases for {} shapes".\
 # INPUTS: test set
 # OUTPUT: frequency-amplitude points and associated behaviour
 
+# create characterization object to store the sampled points
+faCharact = faCharacterization()
+
 for i, s in enumerate(zTest.shapes) :      ## iterate over shapes
     if not(s=='sinus') :     # we do not want to run sinus test cases at this step
         print("Phase 3: running tests for shape {}".format(s))
@@ -104,6 +108,14 @@ for i, s in enumerate(zTest.shapes) :      ## iterate over shapes
                 result.save(name=file_path)
             else :
                 print("-> test already executed: "+file_path)
+                result = ZAnalysis()
+                result.open(file_path, silent=True)
+            if not(s=='impulse' or s=='ud1') :
+                faCharact.add_test(result.get_z_fft_freq_peaks(),\
+                                   result.get_z_ref_fft_peaks(),\
+                                   result.get_z_filter_degree(),\
+                                   result.get_z_non_linear_degree(),\
+                                   s, test['t_scale'], test['a_gain'])
 
 # the results of the tests can be plotted on the frequency-amplitude
 # plane with the plot-ztests-fft.py script
@@ -137,6 +149,8 @@ for i,s in enumerate(zTest.shapes) :
 # INPUTS: frequency-amplitude behaviour points
 # OUTPUT: frequency-amplitude characterization
 
+faCharact.plot_characterization(nlth=sinusoidal_upper_bound)
+plt.show()
 # aggregate results
 
 # check MRs
