@@ -110,7 +110,7 @@ for i, s in enumerate(zTest.shapes) :      ## iterate over shapes
                 print("-> test already executed: "+file_path)
                 result = ZAnalysis()
                 result.open(file_path, silent=True)
-            if not(s=='impulse' or s=='ud1') :
+            if not(s=='impulse' or s=='ud1') : # TMP - FIX ME
                 faCharact.add_test(result.get_z_fft_freq_peaks(),\
                                    result.get_z_ref_fft_peaks(),\
                                    result.get_z_filter_degree(),\
@@ -158,6 +158,13 @@ for i,s in enumerate(zTest.shapes) :
 faCharact.plot_non_linearity_characterization(nlth=sinusoidal_upper_bound)
 faCharact.plot_filtering_characterization(nlth=sinusoidal_upper_bound)
 plt.show()
+
+# example of how to check a given input
+# fa_points_to_check = test_set[4].get_test_coordinates(1.3054438, 0.86848956)
+# amps_to_check = fa_points_to_check.z_ref_amp_peaks
+# freqs_to_check = fa_points_to_check.z_ref_freq_peaks
+# faCharact.check_input(freqs_to_check, amps_to_check,nlth=sinusoidal_upper_bound)
+# plt.show()
 
 # aggregate results
 
