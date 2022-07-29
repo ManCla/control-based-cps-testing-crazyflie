@@ -2,6 +2,7 @@ import numpy as np # for structured arrays
 import matplotlib.pyplot as plt # for plotting
 import pickle as pk # for saving object
 import time # for naming of data-files to save
+import scipy.fft as fft
 
 '''
 Class that contains the frequency amplitude characterization
@@ -167,10 +168,19 @@ class faCharacterization():
     '''
     check a given reference sequence against the characterization.
     INPUT:
-     - reference sequence: TODO should be taken in time domain
-     - (optional) the non-linear th. upper bound (for plotting only)
+     - reference sequence as vector
+     - sampling time dt of input
+     - (optional) the non-linear th. upper bound (used for plotting only)
     '''
-    def check_input(self, freqs, amps, nlth=0) :
+    def check_input(self, ref, dt, nlth=0) :
+
+        # compute fft
+        z_fft_freq = fft.fftfreq(len(ref), d=dt)
+        z_ref_fft  = [abs(x) for x in fft.fft(ref, norm="forward", workers=-1, overwrite_x=True)]
+        # spectrum is symmetric
+        freqs = z_fft_freq[:len(z_fft_freq)//2]
+        amps  = z_ref_fft[:len(z_ref_fft)//2]
+
         axs = self.plot_non_linearity_characterization(nlth=nlth)
         axs.scatter(freqs, amps, s=25, c='black', marker="P")
 
