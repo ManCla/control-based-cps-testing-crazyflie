@@ -74,6 +74,8 @@ class shapeTestSet(object):
     '''
     Generate the actual test set by sampling uniformly in the rectangular
     range between the points [(t_scale_min,a_gain_max), (t_scale_max,0)]
+    TODO : introduce some quantization in the sampling, there is no need for such precision
+           and it would allow recycling tests
     '''
     def generate_test_set(self, freqs_under_test):
         # init test case variables
