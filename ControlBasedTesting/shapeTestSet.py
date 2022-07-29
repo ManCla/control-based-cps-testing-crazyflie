@@ -85,6 +85,8 @@ class shapeTestSet(object):
         for i,f in enumerate(freqs_under_test) :
             # random sampling on integers, then scaled down to get float
             test_t_scale = f/self.faPt11.freq_of_max_amp()
+            if test_t_scale<self.t_scale_min or test_t_scale>self.t_scale_max :
+                print("ERROR obtained a time scaling out of bounds")
             # get threshold and rescale for this specific shape
             a_max = self.nlThreshold.get_th_at_freq(f)/self.faPt11.a_Highest()
             num_amps = int(self.nlThreshold.get_th_at_freq(f)/self.nlThreshold.delta_amp)
