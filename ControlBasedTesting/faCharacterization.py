@@ -164,6 +164,12 @@ class faCharacterization():
 
         return axs # used for adding more elements to the plot
 
+    '''
+    check a given reference sequence against the characterization.
+    INPUT:
+     - reference sequence: TODO should be taken in time domain
+     - (optional) the non-linear th. upper bound (for plotting only)
+    '''
     def check_input(self, freqs, amps, nlth=0) :
         axs = self.plot_non_linearity_characterization(nlth=nlth)
         axs.scatter(freqs, amps, s=25, c='black', marker="P")
