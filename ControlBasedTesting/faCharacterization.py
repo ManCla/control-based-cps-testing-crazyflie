@@ -143,8 +143,8 @@ class faCharacterization():
     '''
     plot filtering characterization
     '''
-    def plot_filtering_characterization(self, nlth=0) :
-        
+    def plot_filtering_characterization(self, non_linear_threshold, nlth=0) :
+
         fig, axs = plt.subplots(1, 1)
         if not(nlth==0) : # if sinusoidal based threshold is provided, use it to plot target area
             # plot frequency limits
@@ -158,10 +158,9 @@ class faCharacterization():
         axs.set_yscale('log')
         axs.grid()
 
-        # TODO: exclude points associated to non-linear behaviour
-        print("TODO: exclude points associated to non-linear behaviour from filtering plot")
-        dof_colours = [get_filtering_colour(x) for x in self.faPoints['deg_filtering']]
-        axs.scatter(self.faPoints['freq'], self.faPoints['amp'], s=2, c=dof_colours)
+        lin_points = np.array([x for x in self.faPoints if x['deg_non_lin']<non_linear_threshold], dtype=faPoint_type)
+        dof_colours = [get_filtering_colour(x['deg_filtering']) for x in lin_points]
+        axs.scatter(lin_points['freq'], lin_points['amp'], s=2, c=dof_colours)
 
         return axs # used for adding more elements to the plot
 
