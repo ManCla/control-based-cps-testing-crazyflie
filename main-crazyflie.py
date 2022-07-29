@@ -166,7 +166,7 @@ for i,s in enumerate(zTest.shapes) :
 
 # plot obtained characterization
 faCharact.plot_non_linearity_characterization(nlth=sinusoidal_upper_bound)
-faCharact.plot_filtering_characterization(nlth=sinusoidal_upper_bound)
+faCharact.plot_filtering_characterization(nl_max, nlth=sinusoidal_upper_bound)
 plt.show()
 
 # example of how to check a given input
