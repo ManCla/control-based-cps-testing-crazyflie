@@ -8,6 +8,7 @@ from ControlBasedTesting.binary_search_sinus_freq import binary_search_sinus_fre
 from ControlBasedTesting.NLthUpperbound import NLthUpperbound
 from ControlBasedTesting.shapeTestSet import shapeTestSet
 from ControlBasedTesting.faCharacterization import faCharacterization
+from ControlBasedTesting.sanity_checks import check_filtering, check_non_lin_amp, check_non_lin_freq
 
 # for Crazyflie Testing
 from CrazyflieSimulationPython.cfSimulator import cfSimulation, ZAnalysis, zTest
@@ -83,7 +84,7 @@ for i, s in enumerate(zTest.shapes) :
         test_set.append(shapeTestSet(zTest,s,sinusoidal_upper_bound,0.001))
 
 # plt.show()
-print("Phase 2 done: I have generated {} test cases for {} shapes".\
+print("Phase 2 done: I have generated {} test cases for each of the {} shapes".\
       format(len(test_set[0].test_cases),len(test_set)))
 
 ########################################################
@@ -133,15 +134,24 @@ for i,s in enumerate(zTest.shapes) :
                              # the sampling of the space
         print(" --- Sanity Check of "+s+" tests --- ")
         # iterate over pairs of tests (this is computationally heavy)
-        for ii,test in enumerate(test_set[i].test_cases) : ## iterate over test cases
+        for ii,test1 in enumerate(test_set[i].test_cases) : ## iterate over test cases
             # check if MRs apply
-            test_file = s+'-'+str(test['a_gain'])+'-'+str(test['t_scale'])
-            if not(exists(data_directory+test_file)) : # check if we find test file
-                print("WARNING -- main-crazyflie : couldn't find test: "+test_file)
-            for test2 in test_set[i].test_cases[(ii+1):] :
-                test2_file = s+'-'+str(test2['a_gain'])+'-'+str(test2['t_scale'])
-                if not(exists(data_directory+test2_file)) : # check if we find test file
-                    print("WARNING -- main-crazyflie : couldn't find test: "+test2_file)
+            test1_file = s+'-'+str(test1['a_gain'])+'-'+str(test1['t_scale'])
+            if not(exists(data_directory+test1_file)) : # check if we find test file
+                print("WARNING -- main-crazyflie : couldn't find test: "+test1_file)
+            else :
+                t1_data = ZAnalysis()
+                # t1_data.open(data_directory+test1_file, silent=True)
+                for test2 in test_set[i].test_cases[(ii+1):] :
+                    test2_file = s+'-'+str(test2['a_gain'])+'-'+str(test2['t_scale'])
+                    if not(exists(data_directory+test2_file)) : # check if we find test file
+                        print("WARNING -- main-crazyflie : couldn't find test: "+test2_file)
+                    else :
+                        t2_data = ZAnalysis()
+                        # t2_data.open(data_directory+test2_file, silent=True)
+                        check_filtering(test1['t_scale'],test2['t_scale'],t1_data, t2_data)
+                        check_non_lin_amp(test1['a_gain'],test2['a_gain'],t1_data, t2_data)
+                        check_non_lin_freq(test1['t_scale'],test2['t_scale'],t1_data, t2_data)
 
 #############################################################
 ### PHASE 4: Aggregate Results and Build Characterization ###
