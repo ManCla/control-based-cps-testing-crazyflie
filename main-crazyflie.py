@@ -169,13 +169,6 @@ faCharact.plot_non_linearity_characterization()
 faCharact.plot_filtering_characterization(nl_max)
 plt.show()
 
-# example of how to check a given input
-# fa_points_to_check = test_set[4].get_test_coordinates(1.3054438, 0.86848956)
-# amps_to_check = fa_points_to_check.z_ref_amp_peaks
-# freqs_to_check = fa_points_to_check.z_ref_freq_peaks
-# faCharact.check_input(freqs_to_check, amps_to_check,nlth=sinusoidal_upper_bound)
-# plt.show()
-
 # aggregate results
 
 # check MRs

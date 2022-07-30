@@ -175,7 +175,7 @@ class faCharacterization():
      - sampling time dt of input
      - (optional) the non-linear th. upper bound (used for plotting only)
     '''
-    def check_input(self, ref, dt, non_linear_threshold) :
+    def plot_input_mapping_on_characterization(self, ref, dt, non_linear_threshold) :
 
         # compute fft
         num_samples = int(ref.duration//dt)+1

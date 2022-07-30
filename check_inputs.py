@@ -15,6 +15,6 @@ faCharact = faCharacterization.open(sys.argv[1])
 
 ref = zTest('ud1',10.5, 0.2)
 
-faCharact.check_input(ref, dt, 0.3)
+faCharact.plot_input_mapping_on_characterization(ref, dt, 0.3)
 
 plt.show()
