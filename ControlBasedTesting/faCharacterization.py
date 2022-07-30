@@ -22,6 +22,9 @@ but you can just iterate over the points.
 
 date_format    = '%Y%m%d_%H%M%S'
 
+spectrum_amp_threshold = 0.05 # percentage of max ref peak above which we look for more peaks in spectra
+use_peaks_only = True  # use an absolute threshold to select only relevant components of input to check
+
 ###################
 ### LOCAL TYPES ###
 ###################
@@ -175,11 +178,21 @@ class faCharacterization():
     def check_input(self, ref, dt, non_linear_threshold) :
 
         # compute fft
-        z_fft_freq = fft.fftfreq(len(ref), d=dt)
-        z_ref_fft  = [abs(x) for x in fft.fft(ref, norm="forward", workers=-1, overwrite_x=True)]
+        num_samples = int(ref.duration//dt)+1
+        z_fft_freq = fft.fftfreq(num_samples, d=dt)
+        ref_time_series = [ref.refGen(x)[2] for x in np.linspace(0,ref.duration, num_samples)]
+        z_ref_fft  = [abs(x) for x in fft.fft(ref_time_series, norm="forward", workers=-1, overwrite_x=True)]
         # spectrum is symmetric
-        freqs = z_fft_freq[:len(z_fft_freq)//2]
-        amps  = z_ref_fft[:len(z_ref_fft)//2]
+        z_fft_freq = np.array(z_fft_freq)[:len(z_fft_freq)//2]
+        z_ref_fft  = np.array(z_ref_fft)[:len(z_ref_fft)//2]
+
+        if use_peaks_only :
+            ref_peaks_indexes = [i for i in range(len(z_ref_fft)) if z_ref_fft[i]>spectrum_amp_threshold ]
+            freqs = z_fft_freq[ref_peaks_indexes]
+            amps  = z_ref_fft[ref_peaks_indexes]
+        else :
+            freqs = z_fft_freq
+            amps  = z_ref_fft
 
         axs_nl = self.plot_non_linearity_characterization()
         axs_nl.scatter(freqs, amps, s=25, c='black', marker="P")
