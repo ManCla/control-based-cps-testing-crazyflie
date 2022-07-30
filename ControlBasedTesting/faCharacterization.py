@@ -62,6 +62,28 @@ def get_filtering_colour(dof) :
     filter_color = [0,dof_sat,1-dof_sat]
     return filter_color
 
+# local function that computes the fa_mapping for an arbitrary input
+# used both for plotting and analysis 
+def fa_mapping_for_input(ref, dt) :
+    # compute input fft
+    num_samples = int(ref.duration//dt)+1
+    z_fft_freq = fft.fftfreq(num_samples, d=dt)
+    ref_time_series = [ref.refGen(x)[2] for x in np.linspace(0,ref.duration, num_samples)]
+    z_ref_fft  = [abs(x) for x in fft.fft(ref_time_series, norm="forward", workers=-1, overwrite_x=True)]
+    # spectrum is symmetric
+    z_fft_freq = np.array(z_fft_freq)[:len(z_fft_freq)//2]
+    z_ref_fft  = np.array(z_ref_fft)[:len(z_ref_fft)//2]
+
+    if use_peaks_only :
+        ref_peaks_indexes = [i for i in range(len(z_ref_fft)) if z_ref_fft[i]>spectrum_amp_threshold ]
+        freqs = z_fft_freq[ref_peaks_indexes]
+        amps  = z_ref_fft[ref_peaks_indexes]
+    else :
+        freqs = z_fft_freq
+        amps  = z_ref_fft
+    return freqs, amps
+
+
 class faCharacterization():
     
     def __init__(self, nlth=0):
@@ -169,35 +191,27 @@ class faCharacterization():
         return axs # used for adding more elements to the plot
 
     '''
-    check a given reference sequence against the characterization.
+    plot the freq-amp mapping of a given input against the characterization.
     INPUT:
-     - reference sequence as vector
+     - reference generator object
      - sampling time dt of input
      - (optional) the non-linear th. upper bound (used for plotting only)
     '''
     def plot_input_mapping_on_characterization(self, ref, dt, non_linear_threshold) :
 
-        # compute fft
-        num_samples = int(ref.duration//dt)+1
-        z_fft_freq = fft.fftfreq(num_samples, d=dt)
-        ref_time_series = [ref.refGen(x)[2] for x in np.linspace(0,ref.duration, num_samples)]
-        z_ref_fft  = [abs(x) for x in fft.fft(ref_time_series, norm="forward", workers=-1, overwrite_x=True)]
-        # spectrum is symmetric
-        z_fft_freq = np.array(z_fft_freq)[:len(z_fft_freq)//2]
-        z_ref_fft  = np.array(z_ref_fft)[:len(z_ref_fft)//2]
-
-        if use_peaks_only :
-            ref_peaks_indexes = [i for i in range(len(z_ref_fft)) if z_ref_fft[i]>spectrum_amp_threshold ]
-            freqs = z_fft_freq[ref_peaks_indexes]
-            amps  = z_ref_fft[ref_peaks_indexes]
-        else :
-            freqs = z_fft_freq
-            amps  = z_ref_fft
-
+        freqs, amps = fa_mapping_for_input(ref, dt) # compute fa mapping
+        # actual plotting
         axs_nl = self.plot_non_linearity_characterization()
         axs_nl.scatter(freqs, amps, s=25, c='black', marker="P")
         axs_df = self.plot_filtering_characterization(non_linear_threshold)
         axs_df.scatter(freqs, amps, s=25, c='black', marker="P")
+
+    '''
+    check acceptance metric for an arbitrary input 
+    '''
+    def check_input_on_characterization() :
+        pass
+
 
 if __name__ == "__main__":
     charact = faCharacterization()
