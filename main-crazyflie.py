@@ -94,7 +94,7 @@ print("Phase 2 done: I have generated {} test cases for each of the {} shapes".\
 # OUTPUT: frequency-amplitude points and associated behaviour
 
 # create characterization object to store the sampled points
-faCharact = faCharacterization()
+faCharact = faCharacterization(nlth=sinusoidal_upper_bound)
 
 for i, s in enumerate(zTest.shapes) :      ## iterate over shapes
     if not(s=='sinus') :     # we do not want to run sinus test cases at this step
@@ -165,8 +165,8 @@ for i,s in enumerate(zTest.shapes) :
 # faCharact.save()
 
 # plot obtained characterization
-faCharact.plot_non_linearity_characterization(nlth=sinusoidal_upper_bound)
-faCharact.plot_filtering_characterization(nl_max, nlth=sinusoidal_upper_bound)
+faCharact.plot_non_linearity_characterization()
+faCharact.plot_filtering_characterization(nl_max)
 plt.show()
 
 # example of how to check a given input
