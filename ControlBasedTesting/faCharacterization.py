@@ -61,8 +61,9 @@ def get_filtering_colour(dof) :
 
 class faCharacterization():
     
-    def __init__(self):
+    def __init__(self, nlth=0):
         self.faPoints =  np.array([], dtype=faPoint_type) # init main vector containing all the points
+        self.nlth = nlth # non-linear threshold upper-bound, optional and used for plotting
 
     '''
     save object containing current characterization
@@ -120,16 +121,16 @@ class faCharacterization():
     '''
     plot non-linearity characterization
     '''
-    def plot_non_linearity_characterization(self, nlth=0) :
+    def plot_non_linearity_characterization(self) :
         
         fig, axs = plt.subplots(1, 1)
-        if not(nlth==0) : # if sinusoidal based threshold is provided, use it to plot target area
+        if not(self.nlth==0) : # if sinusoidal based threshold is provided, use it to plot target area
             # plot frequency limits
-            axs.plot([nlth.f_min,nlth.f_min],[0,nlth.get_maximum_amp()], linestyle='dashed', c='black')
-            axs.plot([nlth.f_max,nlth.f_max],[0,nlth.get_maximum_amp()], linestyle='dashed', c='black')
+            axs.plot([self.nlth.f_min,self.nlth.f_min],[0,self.nlth.get_maximum_amp()], linestyle='dashed', c='black')
+            axs.plot([self.nlth.f_max,self.nlth.f_max],[0,self.nlth.get_maximum_amp()], linestyle='dashed', c='black')
             # plot linearity upper bounds as from pre-estimation
-            axs.plot(nlth.nlth['freq'],nlth.nlth['A_min'])
-            axs.plot(nlth.nlth['freq'],nlth.nlth['A_max'])
+            axs.plot(self.nlth.nlth['freq'],self.nlth.nlth['A_min'])
+            axs.plot(self.nlth.nlth['freq'],self.nlth.nlth['A_max'])
         # plot aesthetics
         axs.set_xscale('log')
         axs.set_yscale('log')
@@ -143,16 +144,16 @@ class faCharacterization():
     '''
     plot filtering characterization
     '''
-    def plot_filtering_characterization(self, non_linear_threshold, nlth=0) :
+    def plot_filtering_characterization(self, non_linear_threshold) :
 
         fig, axs = plt.subplots(1, 1)
-        if not(nlth==0) : # if sinusoidal based threshold is provided, use it to plot target area
+        if not(self.nlth==0) : # if sinusoidal based threshold is provided, use it to plot target area
             # plot frequency limits
-            axs.plot([nlth.f_min,nlth.f_min],[0,nlth.get_maximum_amp()], linestyle='dashed', c='black')
-            axs.plot([nlth.f_max,nlth.f_max],[0,nlth.get_maximum_amp()], linestyle='dashed', c='black')
+            axs.plot([self.nlth.f_min,self.nlth.f_min],[0,self.nlth.get_maximum_amp()], linestyle='dashed', c='black')
+            axs.plot([self.nlth.f_max,self.nlth.f_max],[0,self.nlth.get_maximum_amp()], linestyle='dashed', c='black')
             # plot linearity upper bounds as from pre-estimation
-            axs.plot(nlth.nlth['freq'],nlth.nlth['A_min'])
-            axs.plot(nlth.nlth['freq'],nlth.nlth['A_max'])
+            axs.plot(self.nlth.nlth['freq'],self.nlth.nlth['A_min'])
+            axs.plot(self.nlth.nlth['freq'],self.nlth.nlth['A_max'])
         # plot aesthetics
         axs.set_xscale('log')
         axs.set_yscale('log')
@@ -171,7 +172,7 @@ class faCharacterization():
      - sampling time dt of input
      - (optional) the non-linear th. upper bound (used for plotting only)
     '''
-    def check_input(self, ref, dt, nlth=0) :
+    def check_input(self, ref, dt, non_linear_threshold) :
 
         # compute fft
         z_fft_freq = fft.fftfreq(len(ref), d=dt)
@@ -180,8 +181,10 @@ class faCharacterization():
         freqs = z_fft_freq[:len(z_fft_freq)//2]
         amps  = z_ref_fft[:len(z_ref_fft)//2]
 
-        axs = self.plot_non_linearity_characterization(nlth=nlth)
-        axs.scatter(freqs, amps, s=25, c='black', marker="P")
+        axs_nl = self.plot_non_linearity_characterization()
+        axs_nl.scatter(freqs, amps, s=25, c='black', marker="P")
+        axs_df = self.plot_filtering_characterization(non_linear_threshold)
+        axs_df.scatter(freqs, amps, s=25, c='black', marker="P")
 
 if __name__ == "__main__":
     charact = faCharacterization()
