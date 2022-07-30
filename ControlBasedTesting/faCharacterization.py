@@ -86,6 +86,7 @@ def fa_mapping_for_input(ref, dt) :
 
 class faCharacterization():
     
+    # TODO: nlth at this point should be required and not just optional
     def __init__(self, nlth=0):
         self.faPoints =  np.array([], dtype=faPoint_type) # init main vector containing all the points
         self.nlth = nlth # non-linear threshold upper-bound, optional and used for plotting
@@ -207,10 +208,23 @@ class faCharacterization():
         axs_df.scatter(freqs, amps, s=25, c='black', marker="P")
 
     '''
+    compute how much a given component at given frequency and amplitude is likely
+    to cause non-linear behaviour on its own.
+    '''
+    def compute_nl_deg_for_fa_point(self, freq, amp) : 
+        pass
+
+    '''
     check acceptance metric for an arbitrary input 
     '''
     def check_input_on_characterization() :
-        pass
+        nl_risk = 0 # init variable for risk evaluation of non-linear behaviour appearance
+        freqs, amps = fa_mapping_for_input(ref, dt) # compute fa mapping
+        for i,f in enumerate(freqs) :
+            nl_deg_point = self.compute_nl_deg_for_fa_point(f,amps[i])
+            nl_risk = nl_risk + nl_deg_point
+
+        return nl_risk
 
 
 if __name__ == "__main__":
