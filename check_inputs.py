@@ -13,9 +13,6 @@ ref = np.linspace(0,1,101)
 
 faCharact = faCharacterization.open(sys.argv[1])
 
-faCharact.plot_non_linearity_characterization()
-faCharact.plot_filtering_characterization(0.3 )
-
-faCharact.check_input(ref, 0.01)
+faCharact.check_input(ref, 0.01, 0.3)
 
 plt.show()
