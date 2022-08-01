@@ -26,9 +26,9 @@ data_directory = 'cfdata/'
 f_min      = 0.1  # [Hz]
 f_max      = 2    # [Hz]
 delta_amp  = 0.05 # [m]
-delta_freq = 0.01 # [Hz] maximum resolution on frequency
+delta_freq = 0.05 # [Hz] minimum gap on frequency axis sampling
 max_amp    = 6    # [m]  assumed that max_amp>delta_amp
-nl_max     = 0.3  # value of non-linear degree above which a test
+nl_max     = 0.15 # value of non-linear degree above which a test
                   # is considered too non-linear and not interesting 
 
 # crate object to store upperbound of nonlinear th based on sinus tests
