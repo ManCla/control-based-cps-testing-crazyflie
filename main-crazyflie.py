@@ -34,18 +34,23 @@ nl_max     = 0.15 # value of non-linear degree above which a test
 # crate object to store upperbound of nonlinear th based on sinus tests
 sinusoidal_upper_bound = NLthUpperbound(delta_amp, delta_freq, f_min, f_max)
 
+print("Starting Phase 1: upper bounding of non-linear threshold with sinusoidal inputs")
+
 ### Find th for f_min ###
+print("Phase 1: amplitude binary search along minimum frequency: {}".format(f_min))
 lower, upper = binary_search_sinus_freq(cfSimulation, zTest, ZAnalysis, \
                                         f_min, delta_amp, max_amp, nl_max, data_directory)
 sinusoidal_upper_bound.add_sample(f_min, lower, upper) # add sample to threshold
 
 ### Find th for f_max ###
+print("Phase 1: amplitude binary search along maximum frequency: {}".format(f_max))
 lower, upper = binary_search_sinus_freq(cfSimulation, zTest, ZAnalysis, \
                                         f_max, delta_amp, max_amp, nl_max, data_directory)
 sinusoidal_upper_bound.add_sample(f_max, lower, upper) # add sample to threshold
 
 freq = sinusoidal_upper_bound.sample()
 while freq : # iteration over frequency axis
+    print("Phase 1: amplitude binary search along frequency: {}".format(freq))
     # this function call implements the search along the amplitude axis
     lower, upper = binary_search_sinus_freq(cfSimulation, zTest, ZAnalysis, \
                                             freq, delta_amp, max_amp, nl_max, data_directory)
