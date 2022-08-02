@@ -111,7 +111,7 @@ for i, s in enumerate(zTest.shapes) :      ## iterate over shapes
                 print("-> test already executed: "+file_path)
                 result = ZAnalysis()
             result.open(file_path, silent=True)
-            if not(s=='impulse' or s=='ud1') : # TMP - FIX ME
+            if not(s=='impulse' or s=='ud1') : # TMP - fix discussion on shapes for characterization generation
                 faCharact.add_test(result.get_z_fft_freq_peaks(),\
                                    result.get_z_ref_fft_peaks(),\
                                    result.get_z_filter_degree(),\
