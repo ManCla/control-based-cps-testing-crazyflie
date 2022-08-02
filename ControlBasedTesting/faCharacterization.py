@@ -22,7 +22,7 @@ but you can just iterate over the points.
 
 date_format    = '%Y%m%d_%H%M%S'
 
-spectrum_amp_threshold = 0.05 # percentage of max ref peak above which we look for more peaks in spectra
+spectrum_amp_threshold = 0.05 # absolute value above which we consider components in spectra
 use_peaks_only = True  # use an absolute threshold to select only relevant components of input to check
 
 ###################
@@ -74,7 +74,8 @@ def fa_mapping_for_input(ref, dt) :
     z_fft_freq = np.array(z_fft_freq)[:len(z_fft_freq)//2]
     z_ref_fft  = np.array(z_ref_fft)[:len(z_ref_fft)//2]
 
-    if use_peaks_only :
+    if use_peaks_only : # TODO: doesn't make much sense that this is inconsistent with the approach
+                        #       used for the testing... maybe, because the objective is different ...
         ref_peaks_indexes = [i for i in range(len(z_ref_fft)) if z_ref_fft[i]>spectrum_amp_threshold ]
         freqs = z_fft_freq[ref_peaks_indexes]
         amps  = z_ref_fft[ref_peaks_indexes]
@@ -134,6 +135,7 @@ class faCharacterization():
                      test_aScale,\
                     )
             self.faPoints = np.append(self.faPoints,np.array(point,dtype=faPoint_type))
+        # TODO: enforce ordering of points so that search in input analysis is fast
 
     '''
     Function that evaluates the closed loop bandwidth (i.e.
@@ -217,12 +219,14 @@ class faCharacterization():
     '''
     check acceptance metric for an arbitrary input 
     '''
-    def check_input_on_characterization() :
+    def check_input_on_characterization(self, ref, dt) :
         nl_risk = 0 # init variable for risk evaluation of non-linear behaviour appearance
         freqs, amps = fa_mapping_for_input(ref, dt) # compute fa mapping
+        # TODO: might not be best to do this one point at a time. An alternative could be to
+        #       filter all the points in the characterization to those that are neat any of the input
         for i,f in enumerate(freqs) :
             nl_deg_point = self.compute_nl_deg_for_fa_point(f,amps[i])
-            nl_risk = nl_risk + nl_deg_point
+            nl_risk = nl_risk + nl_deg_point # TODO: might want some form of weighting for this sum
 
         return nl_risk
 
