@@ -6,10 +6,11 @@ Binary search for threshold of non-linear behaviour along a given frequency
 def binary_search_sinus_freq(Simulator, TestCase, TestData, \
                              freq, delta_amp, max_amp, nl_max, data_directory,\
                              silent=True):
-    nl_deg = 1       # initialize non-linear degree
-    amp    = max_amp # initialize amplitude search TODO: should be max_amp/2
-    lower  = 0       # search lower bound
-    upper  = max_amp # search upper bound
+    nl_deg = 1               # initialize non-linear degree
+    lower  = delta_amp       # search lower bound: we use delta_amp to avoid
+                             # issues num noise/resolution and small inputs
+    upper  = max_amp         # search upper bound
+    amp    = (upper+lower)/2 # initialize amplitude search
 
     while abs(upper-lower)>delta_amp : # while not close enough to non-lin. th.
         test      = TestCase('sinus', amp, freq)
