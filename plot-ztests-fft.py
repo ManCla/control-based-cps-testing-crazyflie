@@ -3,6 +3,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 from CrazyflieSimulationPython.cfSimulator import ZAnalysis as fdh
 
+directory = "cfdata"
+
 # script parameters
 non_lin_threshold = 0.3
 stain_non_linear_tests_in_filtering = True
@@ -78,7 +80,6 @@ if __name__ == "__main__":
     ### Iterate over Test Results and Plot ###
     ##########################################
 
-    directory = "cfdata"
     dir_content = os.listdir(directory)
     # filter out directories and look only at files
     dir_content = list(filter(lambda x:os.path.isfile(directory+'/'+x), dir_content))
