@@ -13,7 +13,7 @@ Mainly for avoiding having to re-run phases 1, 2, and 3 every time.
 dt = 0.001
 faCharact = faCharacterization.open(sys.argv[1])
 
-ref = zTest('ud1',10.5, 0.2)
+ref = zTest('ud1',1.2930093,0.38269126)
 
 faCharact.plot_input_mapping_on_characterization(ref, dt, 0.3)
 
