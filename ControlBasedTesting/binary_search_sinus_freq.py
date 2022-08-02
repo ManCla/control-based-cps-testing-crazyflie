@@ -5,7 +5,7 @@ Binary search for threshold of non-linear behaviour along a given frequency
 '''
 def binary_search_sinus_freq(Simulator, TestCase, TestData, \
                              freq, delta_amp, max_amp, nl_max, data_directory,\
-                             silent=False):
+                             silent=True):
     nl_deg = 1               # initialize non-linear degree
     lower  = delta_amp       # search lower bound: we use delta_amp to avoid
                              # issues num noise/resolution and small inputs
@@ -17,6 +17,7 @@ def binary_search_sinus_freq(Simulator, TestCase, TestData, \
         file_path = data_directory+'sinus'+'-'+str(amp)+'-'+str(test.time_coef)
         if not(exists(file_path)) :
             sut    = Simulator()      # initialize simulation object
+            print("executing: "+file_path)
             result = sut.run(test)       # test execution
             result.save(name=file_path)
         elif not(silent) :
@@ -34,6 +35,8 @@ def binary_search_sinus_freq(Simulator, TestCase, TestData, \
         else :                # linear behaviour with small input
             lower = amp          # below this everything should be linear
         amp = (upper+lower)/2    # binary search
+        if amp<delta_amp :
+            print("amp<delta_amp this should not happen")
 
     # this final normalization makes the threshold usable across shapes
     # NOTE: test_data.get_z_ref_fft_peaks()[1] is always the max in sinus tests
