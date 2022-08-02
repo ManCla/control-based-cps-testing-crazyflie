@@ -6,7 +6,7 @@ from CrazyflieSimulationPython.cfSimulator import ZAnalysis as fdh
 directory = "cfdata_nlmax015"
 
 # script parameters
-non_lin_threshold = 0.3
+non_lin_threshold = 0.15
 stain_non_linear_tests_in_filtering = True
 
 # plotting parameters
