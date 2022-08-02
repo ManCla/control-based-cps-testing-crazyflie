@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from CrazyflieSimulationPython.cfSimulator import ZAnalysis as fdh
 
-directory = "cfdata"
+directory = "cfdata_nlmax015"
 
 # script parameters
 non_lin_threshold = 0.3

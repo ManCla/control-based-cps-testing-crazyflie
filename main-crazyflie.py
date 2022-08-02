@@ -13,7 +13,7 @@ from ControlBasedTesting.sanity_checks import check_filtering, check_non_lin_amp
 # for Crazyflie Testing
 from CrazyflieSimulationPython.cfSimulator import cfSimulation, ZAnalysis, zTest
 
-data_directory = 'cfdata/'
+data_directory = 'cfdata_nlmax015/'
 
 ### TODO: set seed for random test generation ###
 
@@ -110,7 +110,7 @@ for i, s in enumerate(zTest.shapes) :      ## iterate over shapes
             else :
                 print("-> test already executed: "+file_path)
                 result = ZAnalysis()
-                result.open(file_path, silent=True)
+            result.open(file_path, silent=True)
             if not(s=='impulse' or s=='ud1') : # TMP - FIX ME
                 faCharact.add_test(result.get_z_fft_freq_peaks(),\
                                    result.get_z_ref_fft_peaks(),\
