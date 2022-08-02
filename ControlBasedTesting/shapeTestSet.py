@@ -94,6 +94,8 @@ class shapeTestSet(object):
             num_amps = int(self.nlThreshold.get_th_at_freq(f)/self.nlThreshold.delta_amp)
             if a_min>a_max :
                 print("ERROR shapeTestSet: a_min>a_max when generating test set for shape "+self.shape)
+                a_max = a_min*2 # to void program crashing. Should not be needed
+                                # after introducing lower bound in binary search.
             for ii in range(0,num_amps):
                 rand_coef = rnd.betavariate(5,0.8) # TODO: study better beta distribution parameters
                                                    # (2,1) gives a "ramp" distribution
