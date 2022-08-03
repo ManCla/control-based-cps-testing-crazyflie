@@ -10,7 +10,7 @@ non_lin_threshold = 0.15
 stain_non_linear_tests_in_filtering = True
 plot_tests_above_wb = True  # tests that have no components below the
                             # bandwidth are interesting but make the
-                            # plot look weird
+                            # plot look weird. When True all tests are included
 
 # plotting parameters
 x_label = "Frequency [Hz]"
