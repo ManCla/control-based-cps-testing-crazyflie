@@ -118,7 +118,7 @@ if __name__ == "__main__":
 
         # plot only tests that have at least one component below the bandwidth
         expected_bandwidth_ub = 0.9
-        if not(plot_tests_above_wb) and any([f<expected_bandwidth_ub for f in freq_coordinates[1:]]) :
+        if plot_tests_above_wb or any([f<expected_bandwidth_ub for f in freq_coordinates[1:]]) :
 
             ### NON LINEAR DEGREE
             # note: this is one measure for the whole test
