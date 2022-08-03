@@ -8,6 +8,9 @@ directory = "cfdata_nlmax015"
 # script parameters
 non_lin_threshold = 0.15
 stain_non_linear_tests_in_filtering = True
+plot_tests_above_wb = True  # tests that have no components below the
+                            # bandwidth are interesting but make the
+                            # plot look weird
 
 # plotting parameters
 x_label = "Frequency [Hz]"
@@ -113,27 +116,31 @@ if __name__ == "__main__":
         freq_coordinates[0] = x_min # show zero frequency to the left of the plot
         ampl_coordinates = data_storage.get_z_ref_fft_peaks()
 
-        ### NON LINEAR DEGREE
-        # note: this is one measure for the whole test
-        nld = min(1,data_storage.get_z_non_linear_degree())     # get behaviour
-        if nld<0.5 :
-            # gradient from blue to yellow
-            non_lin_color = [[2*nld,2*nld,2*(0.5-nld)]] * len(freq_coordinates) # transform into rgb colour
-        else :
-            # gradient from yellow to red
-            non_lin_color = [[1,2*(0.5-(nld-0.5)),0]] * len(freq_coordinates) # transform into rgb colour
-        non_lin_ax_shapes[plot_index].scatter(freq_coordinates, ampl_coordinates, marker='o',s=2,c=non_lin_color)
-        non_lin_ax.scatter(freq_coordinates, ampl_coordinates, marker='o',s=2,c=non_lin_color)
+        # plot only tests that have at least one component below the bandwidth
+        expected_bandwidth_ub = 0.9
+        if not(plot_tests_above_wb) and any([f<expected_bandwidth_ub for f in freq_coordinates[1:]]) :
 
-        ### FILTERING DEGREE
-        # note: this is a measure for each of the peaks of the input
-        if nld>non_lin_threshold and stain_non_linear_tests_in_filtering :
-            # non linear behaviour is above threshold, stain it
-            filter_color = [ [1,0,0] for x in data_storage.get_z_filter_degree()]
-        else :
-            # colour for degree of filtering
-            filter_color = [ [0,min(x,1),1-min(x,1)] for x in data_storage.get_z_filter_degree()]
-        filter_ax_shapes[plot_index].scatter(freq_coordinates, ampl_coordinates, marker='o',s=2,c=filter_color)
-        filter_ax.scatter(freq_coordinates, ampl_coordinates, marker='o',s=2,c=filter_color)
+            ### NON LINEAR DEGREE
+            # note: this is one measure for the whole test
+            nld = min(1,data_storage.get_z_non_linear_degree())     # get behaviour
+            if nld<0.5 :
+                # gradient from blue to yellow
+                non_lin_color = [[2*nld,2*nld,2*(0.5-nld)]] * len(freq_coordinates) # transform into rgb colour
+            else :
+                # gradient from yellow to red
+                non_lin_color = [[1,2*(0.5-(nld-0.5)),0]] * len(freq_coordinates) # transform into rgb colour
+            non_lin_ax_shapes[plot_index].scatter(freq_coordinates, ampl_coordinates, marker='o',s=2,c=non_lin_color)
+            non_lin_ax.scatter(freq_coordinates, ampl_coordinates, marker='o',s=2,c=non_lin_color)
+
+            ### FILTERING DEGREE
+            # note: this is a measure for each of the peaks of the input
+            if nld>non_lin_threshold and stain_non_linear_tests_in_filtering :
+                # non linear behaviour is above threshold, stain it
+                filter_color = [ [1,0,0] for x in data_storage.get_z_filter_degree()]
+            else :
+                # colour for degree of filtering
+                filter_color = [ [0,min(x,1),1-min(x,1)] for x in data_storage.get_z_filter_degree()]
+            filter_ax_shapes[plot_index].scatter(freq_coordinates, ampl_coordinates, marker='o',s=2,c=filter_color)
+            filter_ax.scatter(freq_coordinates, ampl_coordinates, marker='o',s=2,c=filter_color)
 
     plt.show()
