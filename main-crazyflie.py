@@ -67,10 +67,11 @@ print("Phase 1 done: I have sampled {} frequencies".format(sinusoidal_upper_boun
 # OUTPUT: a vector of length num_tests (d,A) pairs for each shape
 
 # uniform sampling of frequencies
-num_freqs = int((f_max-f_min)/sinusoidal_upper_bound.get_freq_resolution())
+freq_res = sinusoidal_upper_bound.get_freq_resolution()
+num_freqs = int((f_max-f_min)/freq_res)
 freqs_under_test = np.linspace(f_min,f_max,num=num_freqs)
 print("desired frequency resolution seems to be {}. Will sample {} freqs for each shape".format\
-     (sinusoidal_upper_bound.get_freq_resolution(),num_freqs))
+     (freq_res, num_freqs))
 
 test_set = []
 
@@ -100,7 +101,7 @@ print("Phase 2 done: I have generated {} test cases for each of the {} shapes".\
 # OUTPUT: frequency-amplitude points and associated behaviour
 
 # create characterization object to store the sampled points
-faCharact = faCharacterization(nlth=sinusoidal_upper_bound)
+faCharact = faCharacterization(freq_res, delta_amp, nlth=sinusoidal_upper_bound)
 
 for i, s in enumerate(zTest.shapes) :      ## iterate over shapes
     if not(s=='sinus') :     # we do not want to run sinus test cases at this step
