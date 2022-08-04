@@ -45,21 +45,20 @@ faPoint_type = np.dtype([('freq', 'f4'),\
 
 # local function to get colour associated to non-linear degree.
 # defines staining colours of non-linearity plot
-def get_nldg_colour(nldg) : 
+def get_nldg_colour(nldg, nl_th) :
     nldg = min(1,nldg)     # get behaviour
-    if nldg<0.5 :
-        # gradient from blue to yellow
-        non_lin_color = [2*nldg,2*nldg,2*(0.5-nldg)] # transform into rgb colour
+    if nldg<nl_th  :
+        # gradient from green to red
+        non_lin_color = [nldg/nl_th,(nl_th-nldg)/nl_th,0]
     else :
-        # gradient from yellow to red
-        non_lin_color = [1,2*(0.5-(nldg-0.5)),0] # transform into rgb colour
+        non_lin_color = [1,0,0]
     return non_lin_color
 
 # local function to get colour associated to non-linear degree.
 # defines staining colours of non-linearity plot
 def get_filtering_colour(dof) :
     dof_sat = min(dof,1)
-    filter_color = [0,dof_sat,1-dof_sat]
+    filter_color = [0,1-dof_sat,dof_sat]
     return filter_color
 
 # local function that computes the fa_mapping for an arbitrary input
@@ -161,8 +160,10 @@ class faCharacterization():
 
     '''
     plot non-linearity characterization
+     - nl_max if the nldeg threshold above which a test is considered too much non-linear
+       here it is used for defining the colour gradient when plotting
     '''
-    def plot_non_linearity_characterization(self) :
+    def plot_non_linearity_characterization(self, non_linear_threshold) :
         
         fig, axs = plt.subplots(1, 1)
         if not(self.nlth==0) : # if sinusoidal based threshold is provided, use it to plot target area
@@ -177,7 +178,7 @@ class faCharacterization():
         axs.set_yscale('log')
         axs.grid()
 
-        nldg_colours = [get_nldg_colour(x) for x in self.faPoints['deg_non_lin']]
+        nldg_colours = [get_nldg_colour(x, non_linear_threshold) for x in self.faPoints['deg_non_lin']]
         axs.scatter(self.faPoints['freq'], self.faPoints['amp'], s=2, c=nldg_colours)
 
         return axs # used for adding more elements to the plot

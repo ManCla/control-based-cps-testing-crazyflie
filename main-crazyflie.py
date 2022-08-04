@@ -110,7 +110,7 @@ for i, s in enumerate(zTest.shapes) :      ## iterate over shapes
             file_path = data_directory+s+'-'+str(test['a_gain'])+'-'+str(test['t_scale'])
             if not(exists(file_path)) :
                 sut    = cfSimulation()      # initialize simulation object
-                result = sut.run(test_input)       # test execution
+                result = sut.run(test_input, inital_drone_state=test_input.get_initial_state())       # test execution
                 result.save(name=file_path)
             else :
                 print("-> test already executed: "+file_path)
@@ -170,7 +170,7 @@ for i,s in enumerate(zTest.shapes) :
 # faCharact.save()
 
 # plot obtained characterization
-faCharact.plot_non_linearity_characterization()
+faCharact.plot_non_linearity_characterization(nl_max)
 faCharact.plot_filtering_characterization(nl_max)
 plt.show()
 

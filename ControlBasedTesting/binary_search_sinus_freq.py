@@ -18,7 +18,7 @@ def binary_search_sinus_freq(Simulator, TestCase, TestData, \
         if not(exists(file_path)) :
             sut    = Simulator()      # initialize simulation object
             print("executing: "+file_path)
-            result = sut.run(test)       # test execution
+            result = sut.run(test, inital_drone_state=test.get_initial_state())       # test execution
             result.save(name=file_path)
         elif not(silent) :
             print("test already executed: "+file_path)
