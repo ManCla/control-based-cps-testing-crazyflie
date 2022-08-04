@@ -94,9 +94,13 @@ def fa_mapping_for_input(ref, dt) :
 class faCharacterization():
     
     # TODO: nlth at this point should be required and not just optional
-    def __init__(self, nlth=0):
+    def __init__(self, df, da, nlth=0):
         self.faPoints =  np.array([], dtype=faPoint_type) # init main vector containing all the points
         self.nlth = nlth # non-linear threshold upper-bound, optional and used for plotting
+
+        # resolution on frequency and amplitude axes: used for analysis
+        self.freq_res = df
+        self.amp_res  = da
 
     '''
     save object containing current characterization
@@ -164,12 +168,6 @@ class faCharacterization():
         pass
 
     '''
-    function that finds all neighbours of a given point
-    '''
-    def find_neighbours(self, point)
-        pass
-
-    '''
     function that computes a lower bound in [f_min, f_max] below which we
     will consider all points to be safe
     NOTE: this  is not used since we use the number of neighbours combined with
@@ -191,13 +189,24 @@ class faCharacterization():
         self.amp_lower_bound = amp_lower_bound
 
     '''
+    function that finds all neighbours of a given point
+    '''
+    def find_neighbours(self, freq, amp) :
+        # TODO: test different values for neighbours bounds
+        # filter frequencies
+        neighbours = [pt for pt in self.faPoints if abs(pt['freq']-freq)<1*self.freq_res]
+        # filter amplitudes
+        neighbours = [pt for pt in neighbours if abs(pt['amp']-amp)<1*self.amp_res]
+        return np.array(neighbours, dtype=faPoint_type)
+
+    '''
     compute how much a given component at given frequency and amplitude is likely
     to cause non-linear behaviour on its own.
     4 possibilities:
-    CASE (1) : out of frequency bounds
-    CASE (2) : in freq bounds and amplitude>threshold
-    CASE (3) : in freq bounds and amplitude<<<threshold
-    CASE (4) : in freq bounds and amplitude around threshold
+     CASE (1) : out of frequency bounds
+     CASE (2) : in freq bounds and amplitude>threshold
+     CASE (3) : in freq bounds and amplitude<<<threshold
+     CASE (4) : in freq bounds and amplitude around threshold
     '''
     def compute_nl_deg_for_fa_point(self, freq, amp) :
         ## CASE (1)
@@ -212,21 +221,26 @@ class faCharacterization():
         # now on we can assume that we are within the frequency bounds
 
         ## CASE (2)
-        local_nl_threshold = self.nlth.nlth.get_th_at_freq(freq)
+        local_nl_threshold = self.nlth.get_th_at_freq(freq)
         if amp>local_nl_threshold :
             return 1 # we are above the upper bound of the threshold, danger zone
         # now we can assume we are in the frequency bounds and below the threshold
 
-        ## CASE (3)
         # find neighbours of point:
-        # if they are less than 2 and the amplitude is low (which has to be otherwise
-        # the is a problem with the sampling) then we are in case 3 and we consider
-        # the point safe
+        neighbours = self.find_neighbours(freq,amp)
+        print ("point (f:{},a:{}) has {} neighbours".format(freq,amp,len(neighbours)))
+
+        ## CASE (3)
+        # if they are less than 2 and the amplitude is low (guaranteed by the
+        # condition above) then we are in case 3 and consider the point safe
+        if len(neighbours)<2 :
+            return 0
 
         ## CASE (4)
         # use neighbours to evaluate potential behaviour of this component
-
-        pass
+        # TMP: visualize the neighbours
+        axs = self.plot_non_linearity_characterization(0.15)
+        axs.scatter(neighbours['freq'],neighbours['amp'], c='b', s=2)
 
     '''
     check acceptance metric for an arbitrary input
@@ -236,8 +250,8 @@ class faCharacterization():
         freqs, amps = fa_mapping_for_input(ref, dt) # compute fa mapping
         # TODO: might not be best to do this one point at a time. An alternative could be to
         #       filter all the points in the characterization to those that are neat any of the input
-        for i,f in enumerate(freqs) :
-            nl_deg_point = self.compute_nl_deg_for_fa_point(f,amps[i])
+        for i,f in enumerate(freqs[1:]) : # skip zero freq - NOTE: counter is not the index then!!
+            nl_deg_point = self.compute_nl_deg_for_fa_point(f,amps[i+1])
             nl_risk = nl_risk + nl_deg_point # TODO: might want some form of weighting for this sum
 
         return nl_risk
