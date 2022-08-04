@@ -134,7 +134,14 @@ class faCharacterization():
                      test_tScale,\
                      test_aScale,\
                     )
-            self.faPoints = np.append(self.faPoints,np.array(point,dtype=faPoint_type))
+            highest_freq = True
+            for j, pt in enumerate(self.faPoints) :
+                if pt['freq']>freqs[i] :
+                    self.faPoints = np.insert(self.faPoints,j,np.array(point,dtype=faPoint_type))
+                    highest_freq = False
+                    break
+            if highest_freq :
+                self.faPoints = np.append(self.faPoints,np.array(point,dtype=faPoint_type))
         # TODO: enforce ordering of points so that search in input analysis is fast
 
     ########################
@@ -280,8 +287,18 @@ if __name__ == "__main__":
     charact = faCharacterization()
 
     charact.add_test([1],[1],[0],0,'my_shape',2,3)
-    charact.add_test([1],[2],[0],1,'my_shape',2,3)
-    charact.add_test([2],[1],[0],1,'my_shape',2,3)
+    charact.add_test([3],[1],[0],1,'my_shape',2,3)
+    charact.add_test([3],[1],[0],1,'my_shape',2,3)
+    charact.add_test([4],[2],[0],1,'my_shape',2,3)
     charact.add_test([2],[2],[0],1,'my_shape',2,3)
-    charact.plot_characterization()
+    charact.add_test([2.5],[2],[0],1,'my_shape',2,3)
+    charact.add_test([3],[1],[0],1,'my_shape',2,3)
+
+    # test if frequency ordering is working
+    freqs = charact.faPoints['freq']
+    deltas = [freqs[i]-freqs[i-1] for i in range(1,len(freqs))]
+    if any( [ d< -0.001 for d in deltas] ) : 
+        print("ERROR: faPoints vector is not ordered!")
+
+    charact.plot_non_linearity_characterization(0.3)
     plt.show()
