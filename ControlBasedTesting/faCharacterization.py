@@ -297,7 +297,7 @@ if __name__ == "__main__":
     # test if frequency ordering is working
     freqs = charact.faPoints['freq']
     deltas = [freqs[i]-freqs[i-1] for i in range(1,len(freqs))]
-    if any( [ d< -0.001 for d in deltas] ) : 
+    if any( [ d< -0.001 for d in deltas] ) :
         print("ERROR: faPoints vector is not ordered!")
 
     charact.plot_non_linearity_characterization(0.3)
