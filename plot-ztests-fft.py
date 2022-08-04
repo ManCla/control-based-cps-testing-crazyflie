@@ -115,14 +115,14 @@ if __name__ == "__main__":
         freq_coordinates = data_storage.get_z_fft_freq_peaks()
         freq_coordinates[0] = x_min # show zero frequency to the left of the plot
         ampl_coordinates = data_storage.get_z_ref_fft_peaks()
+        nld = min(1,data_storage.get_z_non_linear_degree())     # get behaviour
 
         # plot only tests that have at least one component below the bandwidth
         expected_bandwidth_ub = 0.9
-        if plot_tests_above_wb or any([f<expected_bandwidth_ub for f in freq_coordinates[1:]]) :
+        if plot_tests_above_wb or (any([f<expected_bandwidth_ub for f in freq_coordinates[1:]]) and nld<non_lin_threshold) :
 
             ### NON LINEAR DEGREE
             # note: this is one measure for the whole test
-            nld = min(1,data_storage.get_z_non_linear_degree())     # get behaviour
             if nld<0.5 :
                 # gradient from blue to yellow
                 non_lin_color = [[2*nld,2*nld,2*(0.5-nld)]] * len(freq_coordinates) # transform into rgb colour
