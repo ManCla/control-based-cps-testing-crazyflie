@@ -271,7 +271,7 @@ class faCharacterization():
 
         freqs, amps = fa_mapping_for_input(ref, dt) # compute fa mapping
         # actual plotting
-        axs_nl = self.plot_non_linearity_characterization()
+        axs_nl = self.plot_non_linearity_characterization(non_linear_threshold)
         axs_nl.scatter(freqs, amps, s=25, c='black', marker="P")
         axs_df = self.plot_filtering_characterization(non_linear_threshold)
         axs_df.scatter(freqs, amps, s=25, c='black', marker="P")
