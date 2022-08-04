@@ -170,7 +170,7 @@ for i,s in enumerate(zTest.shapes) :
 # faCharact.save()
 
 # plot obtained characterization
-faCharact.plot_non_linearity_characterization()
+faCharact.plot_non_linearity_characterization(nl_max)
 faCharact.plot_filtering_characterization(nl_max)
 plt.show()
 
