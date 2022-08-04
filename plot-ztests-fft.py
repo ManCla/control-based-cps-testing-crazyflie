@@ -22,17 +22,13 @@ This function should implement a gradient from blue to yellow when we are below 
 and from yellow to red when we are above
 '''
 def get_nld_colour(nld) :
-    # 0.5 -> non_lin_threshold or 1-non_lin_threshold
-    # 2   -> 1/non_lin_threshold 
-    # 1   -> 1
-    normalized = 1/non_lin_threshold
+    # nld assumed >1
     if nld<non_lin_threshold  :
-        # gradient from blue to yellow
-        non_lin_color = [normalized*nld,normalized*nld,normalized*(non_lin_threshold -nld)] # transform into rgb colour
+        # gradient from green to red
+        color = [nld/non_lin_threshold,(non_lin_threshold-nld)/non_lin_threshold,0]
     else :
-        # gradient from yellow to red
-        non_lin_color = [1, 0,0] # transform into rgb colour
-    return non_lin_color
+        color = [1,0,0]
+    return color
 
 if __name__ == "__main__":
 
@@ -151,7 +147,7 @@ if __name__ == "__main__":
                 filter_color = [ [1,0,0] for x in data_storage.get_z_filter_degree()]
             else :
                 # colour for degree of filtering
-                filter_color = [ [0,min(x,1),1-min(x,1)] for x in data_storage.get_z_filter_degree()]
+                filter_color = [ [0,1-min(x,1),min(x,1)] for x in data_storage.get_z_filter_degree()]
             filter_ax_shapes[plot_index].scatter(freq_coordinates, ampl_coordinates, marker='o',s=2,c=filter_color)
             filter_ax.scatter(freq_coordinates, ampl_coordinates, marker='o',s=2,c=filter_color)
 
