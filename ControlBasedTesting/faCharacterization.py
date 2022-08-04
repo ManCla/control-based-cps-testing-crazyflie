@@ -62,7 +62,8 @@ def get_filtering_colour(dof) :
     return filter_color
 
 # local function that computes the fa_mapping for an arbitrary input
-# used both for plotting and analysis 
+# used both for plotting and analysis. But not used for building the
+# characterization, in that case the coordinates are given from outside.
 def fa_mapping_for_input(ref, dt) :
     # compute input fft
     num_samples = int(ref.duration//dt)+1
