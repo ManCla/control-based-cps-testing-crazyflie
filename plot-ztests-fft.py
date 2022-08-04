@@ -38,7 +38,7 @@ if __name__ == "__main__":
     #################################
 
     # figure with separated different types of tests
-    non_lin_fig_shapes , non_lin_ax_shapes  = plt.subplots(7, 1, sharex=True, sharey=True)
+    non_lin_fig_shapes , non_lin_ax_shapes  = plt.subplots(4, 1, sharex=True, sharey=True)
     non_lin_fig_shapes.tight_layout()
     non_lin_fig_shapes.supxlabel(x_label)
     non_lin_fig_shapes.supylabel(y_label)
@@ -46,12 +46,12 @@ if __name__ == "__main__":
     non_lin_ax_shapes[0].set_xscale('log')
     non_lin_ax_shapes[0].set_yscale('log')
     non_lin_ax_shapes[0].title.set_text("Non Linear Degree Steps")
-    non_lin_ax_shapes[1].title.set_text("Non Linear Degree Triangular")
+    non_lin_ax_shapes[1].title.set_text("Non Linear Degree Ramp")
     non_lin_ax_shapes[2].title.set_text("Non Linear Degree Trapezoidal")
-    non_lin_ax_shapes[3].title.set_text("Non Linear Degree Sinus")
-    non_lin_ax_shapes[4].title.set_text("Non Linear Degree User-Defined")
-    non_lin_ax_shapes[5].title.set_text("Non Linear Degree Impulse")
-    non_lin_ax_shapes[6].title.set_text("Non Linear Degree Ramp")
+    non_lin_ax_shapes[3].title.set_text("Non Linear Degree Triangular")
+    # non_lin_ax_shapes[4].title.set_text("Non Linear Degree Impulse")
+    # non_lin_ax_shapes[5].title.set_text("Non Linear Degree Sinus")
+    # non_lin_ax_shapes[6].title.set_text("Non Linear Degree User-Defined")
 
     # figure with all tests together
     non_lin_fig , non_lin_ax = plt.subplots(1, 1)
@@ -68,7 +68,7 @@ if __name__ == "__main__":
     #################################
     
     # figure with separated different types of tests
-    filter_fig_shapes , filter_ax_shapes  = plt.subplots(7, 1, sharex=True, sharey=True)
+    filter_fig_shapes , filter_ax_shapes  = plt.subplots(4, 1, sharex=True, sharey=True)
     filter_fig_shapes.tight_layout()
     filter_fig_shapes.supxlabel(x_label)
     filter_fig_shapes.supylabel(y_label)
@@ -76,12 +76,12 @@ if __name__ == "__main__":
     filter_ax_shapes[0].set_xscale('log')
     filter_ax_shapes[0].set_yscale('log')
     filter_ax_shapes[0].title.set_text("Filtering Degree Steps")
-    filter_ax_shapes[1].title.set_text("Filtering Degree Triangular")
+    filter_ax_shapes[1].title.set_text("Filtering Degree Ramp")
     filter_ax_shapes[2].title.set_text("Filtering Degree Trapezoidal")
-    filter_ax_shapes[3].title.set_text("Filtering Degree Sinus")
-    filter_ax_shapes[4].title.set_text("Filtering Degree User-Defined")
-    filter_ax_shapes[5].title.set_text("Filtering Degree Impulse")
-    filter_ax_shapes[6].title.set_text("Filtering Degree Ramp")
+    filter_ax_shapes[3].title.set_text("Filtering Degree Triangular")
+    # filter_ax_shapes[4].title.set_text("Filtering Degree Impulse")
+    # filter_ax_shapes[5].title.set_text("Filtering Degree Sinus")
+    # filter_ax_shapes[6].title.set_text("Filtering Degree User-Defined")
 
     # figure with all tests together
     filter_fig , filter_ax = plt.subplots(1, 1)
@@ -108,18 +108,18 @@ if __name__ == "__main__":
 
         if data_storage.test=="steps" :
             plot_index = 0
-        elif data_storage.test=="triangular" :
+        elif data_storage.test=="ramp" :
             plot_index = 1
         elif data_storage.test=="trapezoidal" :
             plot_index = 2
-        elif data_storage.test=="sinus" :
+        elif data_storage.test=="triangular" :
             plot_index = 3
-        elif data_storage.test=="ud1" :
-            plot_index = 4
         elif data_storage.test=="impulse" :
-            plot_index = 5
-        elif data_storage.test=="ramp" :
-            plot_index = 6
+            continue
+        elif data_storage.test=="sinus" :
+             continue
+        elif data_storage.test=="ud1" :
+            continue
         else :
             print("ERROR: Shape not recognized {}".format(data_storage.test))
             exit()
