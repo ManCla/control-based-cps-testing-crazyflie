@@ -136,6 +136,10 @@ class faCharacterization():
             self.faPoints = np.append(self.faPoints,np.array(point,dtype=faPoint_type))
         # TODO: enforce ordering of points so that search in input analysis is fast
 
+    ########################
+    ### ANALYSIS METHODS ###
+    ########################
+
     '''
     Function that evaluates the closed loop bandwidth (i.e.
     the frequency threshold above which input signals are not tracked)
@@ -157,6 +161,54 @@ class faCharacterization():
         # for pt in self.faPoints['freq'] :
         #     if pt['freq']<freq and pt['freq']>f_closest_lower :
         pass
+
+    '''
+    compute how much a given component at given frequency and amplitude is likely
+    to cause non-linear behaviour on its own.
+    4 possibilities:
+    CASE (1) : out of frequency bounds
+    CASE (2) : in freq bounds and amplitude>threshold
+    CASE (3) : in freq bounds and amplitude<<<threshold
+    CASE (4) : in freq bounds and amplitude around threshold
+    '''
+    def compute_nl_deg_for_fa_point(self, freq, amp) :
+        ## CASE (1)
+        if freq<self.nlth.f_min : # frequency too low
+            return 0 # very unlikely that such a slow input will push the sys out of linearity
+        if freq>self.nlth.f_max : # frequency too high
+            # now, if amplitude is also very high this is suspicious, raise warning
+            if amp>self.nlth.nlth[-1] :
+                print("WARNING - checking input and it has large high frequency component, are you sure?")
+            else :
+                return 0 # this should be just filtered and not really affect the system much
+        # now on we can assume that we are within the frequency bounds
+
+        local_nl_threshold = self.nlth.nlth.get_th_at_freq(freq)
+        if amp>local_nl_threshold : ## CASE (2)
+            return 1 # we are above the upper bound of the threshold, danger zone
+
+        ## CASE (3)
+
+        ## CASE (4)
+        pass
+
+    '''
+    check acceptance metric for an arbitrary input
+    '''
+    def check_input_on_characterization(self, ref, dt) :
+        nl_risk = 0 # init variable for risk evaluation of non-linear behaviour appearance
+        freqs, amps = fa_mapping_for_input(ref, dt) # compute fa mapping
+        # TODO: might not be best to do this one point at a time. An alternative could be to
+        #       filter all the points in the characterization to those that are neat any of the input
+        for i,f in enumerate(freqs) :
+            nl_deg_point = self.compute_nl_deg_for_fa_point(f,amps[i])
+            nl_risk = nl_risk + nl_deg_point # TODO: might want some form of weighting for this sum
+
+        return nl_risk
+
+    ########################
+    ### PLOTTING METHODS ###
+    ########################
 
     '''
     plot non-linearity characterization
@@ -222,51 +274,6 @@ class faCharacterization():
         axs_nl.scatter(freqs, amps, s=25, c='black', marker="P")
         axs_df = self.plot_filtering_characterization(non_linear_threshold)
         axs_df.scatter(freqs, amps, s=25, c='black', marker="P")
-
-    '''
-    compute how much a given component at given frequency and amplitude is likely
-    to cause non-linear behaviour on its own.
-    4 possibilities:
-    CASE (1) : out of frequency bounds
-    CASE (2) : in freq bounds and amplitude>threshold
-    CASE (3) : in freq bounds and amplitude<<<threshold
-    CASE (4) : in freq bounds and amplitude around threshold
-    '''
-    def compute_nl_deg_for_fa_point(self, freq, amp) :
-        ## CASE (1)
-        if freq<self.nlth.f_min : # frequency too low
-            return 0 # very unlikely that such a slow input will push the sys out of linearity
-        if freq>self.nlth.f_max : # frequency too high
-            # now, if amplitude is also very high this is suspicious, raise warning
-            if amp>self.nlth.nlth[-1] :
-                print("WARNING - checking input and it has large high frequency component, are you sure?")
-            else :
-                return 0 # this should be just filtered and not really affect the system much
-        # now on we can assume that we are within the frequency bounds
-
-        local_nl_threshold = self.nlth.nlth.get_th_at_freq(freq)
-        if amp>local_nl_threshold : ## CASE (2)
-            return 1 # we are above the upper bound of the threshold, danger zone
-
-        ## CASE (3)
-
-        ## CASE (4)
-        pass
-
-    '''
-    check acceptance metric for an arbitrary input 
-    '''
-    def check_input_on_characterization(self, ref, dt) :
-        nl_risk = 0 # init variable for risk evaluation of non-linear behaviour appearance
-        freqs, amps = fa_mapping_for_input(ref, dt) # compute fa mapping
-        # TODO: might not be best to do this one point at a time. An alternative could be to
-        #       filter all the points in the characterization to those that are neat any of the input
-        for i,f in enumerate(freqs) :
-            nl_deg_point = self.compute_nl_deg_for_fa_point(f,amps[i])
-            nl_risk = nl_risk + nl_deg_point # TODO: might want some form of weighting for this sum
-
-        return nl_risk
-
 
 if __name__ == "__main__":
     charact = faCharacterization()

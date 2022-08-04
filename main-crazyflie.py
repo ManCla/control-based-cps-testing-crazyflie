@@ -28,6 +28,7 @@ f_max      = 2    # [Hz]
 delta_amp  = 0.05 # [m]
 delta_freq = 0.05 # [Hz] minimum gap on frequency axis sampling
 max_amp    = 6    # [m]  assumed that max_amp>delta_amp
+                  # NOTE: this is an absolute maximum of the input, not of the (f,A) point.
 nl_max     = 0.15 # value of non-linear degree above which a test
                   # is considered too non-linear and not interesting 
 
