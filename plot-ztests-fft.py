@@ -17,6 +17,15 @@ x_label = "Frequency [Hz]"
 y_label = "Amplitude [m]"
 x_min   = 0.005 # used as x coordinate for zero frequency component of tests in log scale
 
+def get_nld_colour(nld) :
+    if nld<0.5 :
+        # gradient from blue to yellow
+        non_lin_color = [2*nld,2*nld,2*(0.5-nld)] # transform into rgb colour
+    else :
+        # gradient from yellow to red
+        non_lin_color = [1,2*(0.5-(nld-0.5)),0] # transform into rgb colour
+    return non_lin_color
+
 if __name__ == "__main__":
 
     #################################
@@ -123,12 +132,7 @@ if __name__ == "__main__":
 
             ### NON LINEAR DEGREE
             # note: this is one measure for the whole test
-            if nld<0.5 :
-                # gradient from blue to yellow
-                non_lin_color = [[2*nld,2*nld,2*(0.5-nld)]] * len(freq_coordinates) # transform into rgb colour
-            else :
-                # gradient from yellow to red
-                non_lin_color = [[1,2*(0.5-(nld-0.5)),0]] * len(freq_coordinates) # transform into rgb colour
+            non_lin_color = [get_nld_colour(nld)] * len(freq_coordinates)
             non_lin_ax_shapes[plot_index].scatter(freq_coordinates, ampl_coordinates, marker='o',s=2,c=non_lin_color)
             non_lin_ax.scatter(freq_coordinates, ampl_coordinates, marker='o',s=2,c=non_lin_color)
 
