@@ -17,13 +17,21 @@ x_label = "Frequency [Hz]"
 y_label = "Amplitude [m]"
 x_min   = 0.005 # used as x coordinate for zero frequency component of tests in log scale
 
+'''
+This function should implement a gradient from blue to yellow when we are below non_lin_threshold
+and from yellow to red when we are above
+'''
 def get_nld_colour(nld) :
-    if nld<0.5 :
+    # 0.5 -> non_lin_threshold or 1-non_lin_threshold
+    # 2   -> 1/non_lin_threshold 
+    # 1   -> 1
+    normalized = 1/non_lin_threshold
+    if nld<non_lin_threshold  :
         # gradient from blue to yellow
-        non_lin_color = [2*nld,2*nld,2*(0.5-nld)] # transform into rgb colour
+        non_lin_color = [normalized*nld,normalized*nld,normalized*(non_lin_threshold -nld)] # transform into rgb colour
     else :
         # gradient from yellow to red
-        non_lin_color = [1,2*(0.5-(nld-0.5)),0] # transform into rgb colour
+        non_lin_color = [1, 0,0] # transform into rgb colour
     return non_lin_color
 
 if __name__ == "__main__":
