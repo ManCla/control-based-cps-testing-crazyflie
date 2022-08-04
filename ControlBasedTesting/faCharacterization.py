@@ -39,6 +39,12 @@ faPoint_type = np.dtype([('freq', 'f4'),\
                          ('a_gain', 'f4')
                         ])
 
+# Type of element in lower bound threshold vector
+# used only in build_lower_bound() method.
+# NOTE that said lower bound is not really used, if not for plotting
+# consider removing
+amp_lower_bound_point_type = np.dtype([('freq', '<f4'), ('amp', '<f4')])
+
 #######################
 ### LOCAL FUNCTIONS ###
 #######################
@@ -158,17 +164,31 @@ class faCharacterization():
         pass
 
     '''
+    function that finds all neighbours of a given point
     '''
-    def get_lower_bound_at_freq(self, freq) :
-        # find closest points in frequency
-        # get the minimum amplitude available
-        # f_closest_lower = 0
-        # amp_closest_lower = 0
-        # f_closest_upper = 1000 # just needs to be a number higher than any sampled frequency
-        # amp_closest_upper = 0
-        # for pt in self.faPoints['freq'] :
-        #     if pt['freq']<freq and pt['freq']>f_closest_lower :
+    def find_neighbours(self, point)
         pass
+
+    '''
+    function that computes a lower bound in [f_min, f_max] below which we
+    will consider all points to be safe
+    NOTE: this  is not used since we use the number of neighbours combined with
+          the amplitude to evaluate such an occurrence. Kept for plotting.
+    '''
+    def build_lower_bound(self) :
+        # iterate over frequencies and store minimum amplitude available for each of them
+        amp_lower_bound = np.array([],dtype=amp_lower_bound_point_type)
+        f = self.faPoints[0]['freq']
+        a = 1000 # just needs to be a large number, would make sense to use A_max
+        for pt in self.faPoints[1:] :
+            if pt['freq']==f : # if we are still on the previous frequency
+                if pt['amp']<a :
+                    a = pt['amp']
+            else : # if we fond a new frequency
+                amp_lower_bound = np.append(amp_lower_bound, np.array((f,a),dtype=amp_lower_bound_point_type))
+                f = pt['freq']
+                a = pt['amp']
+        self.amp_lower_bound = amp_lower_bound
 
     '''
     compute how much a given component at given frequency and amplitude is likely
@@ -191,13 +211,21 @@ class faCharacterization():
                 return 0 # this should be just filtered and not really affect the system much
         # now on we can assume that we are within the frequency bounds
 
+        ## CASE (2)
         local_nl_threshold = self.nlth.nlth.get_th_at_freq(freq)
-        if amp>local_nl_threshold : ## CASE (2)
+        if amp>local_nl_threshold :
             return 1 # we are above the upper bound of the threshold, danger zone
+        # now we can assume we are in the frequency bounds and below the threshold
 
         ## CASE (3)
+        # find neighbours of point:
+        # if they are less than 2 and the amplitude is low (which has to be otherwise
+        # the is a problem with the sampling) then we are in case 3 and we consider
+        # the point safe
 
         ## CASE (4)
+        # use neighbours to evaluate potential behaviour of this component
+
         pass
 
     '''
@@ -266,6 +294,19 @@ class faCharacterization():
         axs.scatter(lin_points['freq'], lin_points['amp'], s=2, c=dof_colours)
 
         return axs # used for adding more elements to the plot
+
+    '''
+    plot the lower bound of the amplitude below which we consider
+    all inputs in the [f_min, f_max] range accepted.
+    NOTE: this is not really needed because such points will be excluded
+          already by the fact that they have no neighbours
+    '''
+    def plot_amp_lower_bound(self, non_linear_threshold) :
+
+        axs = self.plot_non_linearity_characterization(non_linear_threshold)
+
+        self.build_lower_bound() # TODO: only if it hasn't already been computed
+        axs.plot(self.amp_lower_bound['freq'],self.amp_lower_bound['amp'], c=[0,1,0])
 
     '''
     plot the freq-amp mapping of a given input against the characterization.
