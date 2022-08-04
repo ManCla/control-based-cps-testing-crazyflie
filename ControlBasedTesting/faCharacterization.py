@@ -133,6 +133,7 @@ class faCharacterization():
                      test_tScale,\
                      test_aScale,\
                     )
+            # insert point in vector in order of frequencies
             highest_freq = True
             for j, pt in enumerate(self.faPoints) :
                 if pt['freq']>freqs[i] :
@@ -141,7 +142,6 @@ class faCharacterization():
                     break
             if highest_freq :
                 self.faPoints = np.append(self.faPoints,np.array(point,dtype=faPoint_type))
-        # TODO: enforce ordering of points so that search in input analysis is fast
 
     '''
     Function that evaluates the closed loop bandwidth (i.e.
