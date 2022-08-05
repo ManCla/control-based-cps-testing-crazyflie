@@ -23,6 +23,8 @@ shape = 'sinus'
 a_gain = 1.5374999999999999
 t_scale = 0.574999988079071
 file_name = shape+'-'+str(a_gain)+'-'+str(t_scale)
+print("Analysing test "+file_name)
+
 if try_plot_test and exists(directory+file_name) :
     test_results = fdh()
     test_results.open(directory+file_name)
@@ -32,6 +34,8 @@ ref = zTest(shape,a_gain,t_scale)
 
 # faCharact.plot_amp_lower_bound(non_linear_threshold)
 faCharact.plot_input_mapping_on_characterization(ref, dt, non_linear_threshold)
-faCharact.check_input_on_characterization(ref, dt)
+
+risk_out_bounds = faCharact.check_input_on_characterization(ref, dt)
+print("The risk of this input triggering non-linear behaviour is: {}".format(risk_out_bounds))
 
 plt.show()
