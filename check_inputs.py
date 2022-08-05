@@ -17,13 +17,17 @@ try_plot_test = False # use if you want to try plotting also the actual executio
 directory = "cfdata_nlmax015/"
 dt = 0.001
 non_linear_threshold = 0.15
-faCharact = faCharacterization.open(sys.argv[1])
 
-shape = 'sinus'
-a_gain = 1.5374999999999999
-t_scale = 0.574999988079071
-file_name = shape+'-'+str(a_gain)+'-'+str(t_scale)
+# unpack command line inputs
+faCharact = faCharacterization.open(sys.argv[1])
+file_name = sys.argv[2].split('/')[1]
+
+# unpack test name
 print("Analysing test "+file_name)
+use_case  = file_name.split('-')
+shape   = use_case[0]
+a_gain  = float(use_case[1])
+t_scale = float(use_case[2])
 
 if try_plot_test and exists(directory+file_name) :
     test_results = fdh()
