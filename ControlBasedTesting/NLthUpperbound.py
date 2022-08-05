@@ -129,6 +129,7 @@ class NLthUpperbound():
     '''
     return average gap between two frequencies sampled in the
     upper-bounding of the non-linearity threshold.
+    TODO: try some alternatives
     '''
     def get_freq_resolution(self) :
         return np.average([self.nlth['freq'][i+1]-self.nlth['freq'][i] for i in range(len(self.nlth)-1)])
