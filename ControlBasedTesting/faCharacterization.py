@@ -214,7 +214,7 @@ class faCharacterization():
             return 0 # very unlikely that such a slow input will push the sys out of linearity
         if freq>self.nlth.f_max : # frequency too high
             # now, if amplitude is also very high this is suspicious, raise warning
-            if amp>self.nlth.nlth[-1] :
+            if amp>self.nlth.nlth[-1]['A_max'] :
                 print("WARNING - checking input and it has large high frequency component, are you sure?")
             else :
                 return 0 # this should be just filtered and not really affect the system much
