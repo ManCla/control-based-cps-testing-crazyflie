@@ -48,9 +48,6 @@ for file in dir_content :
 
     ref = zTest(shape,a_gain,t_scale)
 
-    # faCharact.plot_amp_lower_bound(non_linear_threshold)
-    # faCharact.plot_input_mapping_on_characterization(ref, dt, non_linear_threshold)
-
     risk_out_bounds = faCharact.check_input_on_characterization(ref, dt)
     nl_prediction = np.append(nl_prediction, np.array([risk_out_bounds]))
     # print("The risk of this input triggering non-linear behaviour is: {}".format(risk_out_bounds))
@@ -59,5 +56,6 @@ fig, axs = plt.subplots(1, 1)
 axs.title.set_text("Closeness to performance bound VS non linear degree")
 axs.set_xlabel("Non-linear degree from test execution")
 axs.set_ylabel("Risk assessment from our characterizationn")
+axs.grid()
 axs.scatter(nl_actual, nl_prediction, s=2)
 plt.show()
