@@ -22,8 +22,9 @@ but you can just iterate over the points.
 
 date_format    = '%Y%m%d_%H%M%S'
 
+use_lower_th_input_analysis = True  # use an absolute threshold to select only relevant components of input to check
 spectrum_amp_threshold = 0.05 # absolute value above which we consider components in spectra
-use_peaks_only = True  # use an absolute threshold to select only relevant components of input to check
+                              # consider setting to delta_amp or another characterization parameter
 
 ###################
 ### LOCAL TYPES ###
@@ -80,8 +81,7 @@ def fa_mapping_for_input(ref, dt) :
     z_fft_freq = np.array(z_fft_freq)[:len(z_fft_freq)//2]
     z_ref_fft  = np.array(z_ref_fft)[:len(z_ref_fft)//2]
 
-    if use_peaks_only : # TODO: doesn't make much sense that this is inconsistent with the approach
-                        #       used for the testing... maybe, because the objective is different ...
+    if use_lower_th_input_analysis : # TODO: we just remove the very small components. Think it through
         ref_peaks_indexes = [i for i in range(len(z_ref_fft)) if z_ref_fft[i]>spectrum_amp_threshold ]
         freqs = z_fft_freq[ref_peaks_indexes]
         amps  = z_ref_fft[ref_peaks_indexes]
