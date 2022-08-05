@@ -57,5 +57,8 @@ axs.title.set_text("Closeness to performance bound VS non linear degree")
 axs.set_xlabel("Non-linear degree from test execution")
 axs.set_ylabel("Risk assessment from our characterizationn")
 axs.grid()
+lim = max(max(nl_actual),max(nl_prediction))+0.2
+axs.set_xlim([0, lim])
+axs.set_ylim([0, lim])
 axs.scatter(nl_actual, nl_prediction, s=2)
 plt.show()
