@@ -95,13 +95,16 @@ def fa_mapping_for_input(ref, dt) :
 class faCharacterization():
     
     # TODO: nlth at this point should be required and not just optional
-    def __init__(self, df, da, nlth=0):
+    def __init__(self, df, da, num_comp_rfr, nlth=0):
         self.faPoints =  np.array([], dtype=faPoint_type) # init main vector containing all the points
+        self.fa_rfr =  np.array([]) # table of fa points used for random forest regression
         self.nlth = nlth # non-linear threshold upper-bound, optional and used for plotting
 
         # resolution on frequency and amplitude axes: used for analysis
         self.freq_res = df
         self.amp_res  = da
+        # number of fa components used for random forest regression
+        self.num_comp_rfr = num_comp_rfr
 
     '''
     save object containing current characterization
@@ -159,6 +162,15 @@ class faCharacterization():
                     break
             if highest_freq :
                 self.faPoints = np.append(self.faPoints,np.array(point,dtype=faPoint_type))
+
+    def add_test_random_forest_dataset(self, freqs, amps, deg_non_lin) :
+        if not(len(freqs)==self.num_comp_rfr and len(amps)==self.num_comp_rfr) :
+            print("ERROR -- faCharacterization- rand forest: incorrect number of points info")
+        new_row = np.hstack((freqs,amps,deg_non_lin)) # new row to be added to table
+        if self.fa_rfr.size==0 :
+            self.fa_rfr = new_row
+        else :
+            self.fa_rfr = np.vstack((self.fa_rfr,new_row))
 
     ########################
     ### ANALYSIS METHODS ###
