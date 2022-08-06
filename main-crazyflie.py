@@ -36,7 +36,7 @@ nl_max     = 0.15 # value of non-linear degree above which a test
 # number of frequency-amplitude components used for each test from the random forest regression
 num_fa_components_rfr = 20
 # number of classifiers used for random forest regression
-num_trees_rfr = 200
+num_trees_rfr = 2000
 
 # crate object to store upperbound of nonlinear th based on sinus tests
 sinusoidal_upper_bound = NLthUpperbound(delta_amp, delta_freq, f_min, f_max)
@@ -133,9 +133,11 @@ for i, s in enumerate(zTest.shapes) :      ## iterate over shapes
                 top_freqs, top_amps = result.maxima_ref_fa_components(num_fa_components_rfr)
                 faCharact.add_test_random_forest_dataset(top_freqs, top_amps, result.get_z_non_linear_degree())
 
-print("Phase 3: building random forest classifier")
+print("Phase 3: building random forest regressor")
 faCharact.create_forest_regressor()
-print("Phase 3 done: finished building random forest classifier")
+print("Phase 3: building random forest classifier")
+faCharact.create_forest_classifier(nl_max)
+print("Phase 3 done: finished building random forest regressor and classifier")
 
 # the results of the tests can be plotted on the frequency-amplitude
 # plane with the plot-ztests-fft.py script

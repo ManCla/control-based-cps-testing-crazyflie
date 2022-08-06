@@ -4,6 +4,7 @@ import pickle as pk # for saving object
 import time # for naming of data-files to save
 import scipy.fft as fft
 from sklearn.ensemble import RandomForestRegressor as RFR # used for random forest classification
+from sklearn.ensemble import RandomForestClassifier as RFC # used for random forest classification
 
 '''
 Class that contains the frequency amplitude characterization
@@ -94,7 +95,9 @@ class faCharacterization():
         # number of fa components used for random forest regression
         self.num_comp_rfr = num_comp_rfr
 
+        # initialize random forest regressor and classifier
         self.rfr = RFR(num_trees)
+        self.rfc = RFC(num_trees)
 
     '''
     save object containing current characterization
@@ -208,6 +211,22 @@ class faCharacterization():
         freqs, amps = fa_mapping_for_input(ref, dt, self.num_comp_rfr) # compute fa mapping
         # this one should be just an execution of the obtained random tree forest
         return self.rfr.predict([np.hstack((freqs,amps))])
+
+    '''
+    build random forest
+    '''
+    def create_forest_classifier(self, non_linear_threshold) :
+        self.rfc_non_linear_threshold = non_linear_threshold
+        self.rfc = self.rfc.fit(self.fa_rfr[:,:-1],[x>non_linear_threshold for x in self.fa_rfr[:,-1]])
+
+    '''
+    check acceptance metric for an arbitrary input
+    '''
+    def check_input_on_rfc(self, ref, dt) :
+        freqs, amps = fa_mapping_for_input(ref, dt, self.num_comp_rfr) # compute fa mapping
+        # this one should be just an execution of the obtained random tree forest
+        return self.rfc.predict([np.hstack((freqs,amps))])
+
 
     ########################
     ### PLOTTING METHODS ###
