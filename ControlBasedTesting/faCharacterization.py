@@ -41,12 +41,6 @@ faPoint_type = np.dtype([('freq', 'f4'),\
                          ('a_gain', 'f4')
                         ])
 
-# Type of element in lower bound threshold vector
-# used only in build_lower_bound() method.
-# NOTE that said lower bound is not really used, if not for plotting
-# consider removing
-amp_lower_bound_point_type = np.dtype([('freq', '<f4'), ('amp', '<f4')])
-
 #######################
 ### LOCAL FUNCTIONS ###
 #######################
@@ -206,102 +200,12 @@ class faCharacterization():
         pass
 
     '''
-    function that computes a lower bound in [f_min, f_max] below which we
-    will consider all points to be safe
-    NOTE: this  is not used since we use the number of neighbours combined with
-          the amplitude to evaluate such an occurrence. Kept for plotting.
-    '''
-    def build_lower_bound(self) :
-        # iterate over frequencies and store minimum amplitude available for each of them
-        amp_lower_bound = np.array([],dtype=amp_lower_bound_point_type)
-        f = self.faPoints[0]['freq']
-        a = 1000 # just needs to be a large number, would make sense to use A_max
-        for pt in self.faPoints[1:] :
-            if pt['freq']==f : # if we are still on the previous frequency
-                if pt['amp']<a :
-                    a = pt['amp']
-            else : # if we fond a new frequency
-                amp_lower_bound = np.append(amp_lower_bound, np.array((f,a),dtype=amp_lower_bound_point_type))
-                f = pt['freq']
-                a = pt['amp']
-        self.amp_lower_bound = amp_lower_bound
-
-    '''
-    function that finds all neighbours of a given point
-    '''
-    def find_neighbours(self, freq, amp) :
-        # TODO: test different values for neighbours bounds
-        # filter frequencies
-        neighbours = [pt for pt in self.faPoints if abs(pt['freq']-freq)<1*self.freq_res]
-        # filter amplitudes
-        neighbours = [pt for pt in neighbours if abs(pt['amp']-amp)<1*self.amp_res]
-        return np.array(neighbours, dtype=faPoint_type)
-
-    '''
-    compute how much a given component at given frequency and amplitude is likely
-    to cause non-linear behaviour on its own.
-    4 possibilities:
-     CASE (1) : out of frequency bounds
-     CASE (2) : in freq bounds and amplitude>threshold
-     CASE (3) : in freq bounds and amplitude<<<threshold
-     CASE (4) : in freq bounds and amplitude around threshold
-    '''
-    def compute_nl_deg_for_fa_point(self, freq, amp) :
-        ## CASE (1)
-        if freq<self.nlth.f_min : # frequency too low
-            return 0 # very unlikely that such a slow input will push the sys out of linearity
-        if freq>self.nlth.f_max : # frequency too high
-            # now, if amplitude is also very high this is suspicious, raise warning
-            if amp>self.nlth.nlth[-1]['A_max'] :
-                print("WARNING - checking input and it has large high frequency component, are you sure?")
-            else :
-                return 0 # this should be just filtered and not really affect the system much
-        # now on we can assume that we are within the frequency bounds
-
-        ## CASE (2)
-        local_nl_threshold = self.nlth.get_th_at_freq(freq)
-        if amp>local_nl_threshold :
-            return 1 # we are above the upper bound of the threshold, danger zone
-        # now we can assume we are in the frequency bounds and below the threshold
-
-        # find neighbours of point:
-        neighbours = self.find_neighbours(freq,amp)
-        print ("point (f:{},a:{}) has {} neighbours".format(freq,amp,len(neighbours)))
-
-        ## CASE (3)
-        # if they are less than 2 and the amplitude is low (guaranteed by the
-        # condition above) then we are in case 3 and consider the point safe
-        # TODO: consider increasing this
-        if len(neighbours)<2 :
-            return 0
-
-        ## CASE (4)
-        # use neighbours to evaluate potential behaviour of this component
-        # TMP: visualize the neighbours
-        axs = self.plot_non_linearity_characterization(0.15)
-        axs.scatter(neighbours['freq'],neighbours['amp'], c='b', s=2)
-        # TODO: are you sure that average here is the right thing to do?
-        #       weight over the weight of the points
-        #       defined as the number of mates they have?
-        return np.average(neighbours['deg_non_lin'], weights=neighbours['weight'])
-
-    '''
     check acceptance metric for an arbitrary input
     '''
     def check_input_on_characterization(self, ref, dt) :
         freqs, amps = fa_mapping_for_input(ref, dt) # compute fa mapping
-
-        # init variable for risk evaluation of non-linear behaviour appearance
-        pt_nl_risk = np.zeros((len(freqs)-1))
-
-        # TODO: might not be best to do this one point at a time. An alternative could be to
-        #       filter all the points in the characterization to those that are neat any of the input
-        for i,f in enumerate(freqs[1:]) : # skip zero freq - NOTE: counter is not the index then!!
-            pt_nl_risk[i] = self.compute_nl_deg_for_fa_point(f,amps[i+1])
-
-        # TODO: maybe want to account also for filtering degree in evaluation?
-        # TODO: some weighting over the input under analysis?
-        return (len(amps)-1)*np.average(pt_nl_risk, weights=amps[1:])
+        # this one should be just an execution of the obtained random tree forest
+        return
 
     ########################
     ### PLOTTING METHODS ###
@@ -355,19 +259,6 @@ class faCharacterization():
         axs.scatter(lin_points['freq'], lin_points['amp'], s=2, c=dof_colours)
 
         return axs # used for adding more elements to the plot
-
-    '''
-    plot the lower bound of the amplitude below which we consider
-    all inputs in the [f_min, f_max] range accepted.
-    NOTE: this is not really needed because such points will be excluded
-          already by the fact that they have no neighbours
-    '''
-    def plot_amp_lower_bound(self, non_linear_threshold) :
-
-        axs = self.plot_non_linearity_characterization(non_linear_threshold)
-
-        self.build_lower_bound() # TODO: only if it hasn't already been computed
-        axs.plot(self.amp_lower_bound['freq'],self.amp_lower_bound['amp'], c=[0,1,0])
 
     '''
     plot the freq-amp mapping of a given input against the characterization.
