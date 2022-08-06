@@ -239,6 +239,7 @@ class faCharacterization():
         ## CASE (3)
         # if they are less than 2 and the amplitude is low (guaranteed by the
         # condition above) then we are in case 3 and consider the point safe
+        # TODO: consider increasing this
         if len(neighbours)<2 :
             return 0
 
@@ -247,20 +248,28 @@ class faCharacterization():
         # TMP: visualize the neighbours
         axs = self.plot_non_linearity_characterization(0.15)
         axs.scatter(neighbours['freq'],neighbours['amp'], c='b', s=2)
+        # TODO: are you sure that average here is the right thing to do?
+        #       weight over the weight of the points
+        #       defined as the number of mates they have?
+        return np.average(neighbours['deg_non_lin'], weights=neighbours['weight'])
 
     '''
     check acceptance metric for an arbitrary input
     '''
     def check_input_on_characterization(self, ref, dt) :
-        nl_risk = 0 # init variable for risk evaluation of non-linear behaviour appearance
         freqs, amps = fa_mapping_for_input(ref, dt) # compute fa mapping
+
+        # init variable for risk evaluation of non-linear behaviour appearance
+        pt_nl_risk = np.zeros((len(freqs)-1))
+
         # TODO: might not be best to do this one point at a time. An alternative could be to
         #       filter all the points in the characterization to those that are neat any of the input
         for i,f in enumerate(freqs[1:]) : # skip zero freq - NOTE: counter is not the index then!!
-            nl_deg_point = self.compute_nl_deg_for_fa_point(f,amps[i+1])
-            nl_risk = nl_risk + nl_deg_point # TODO: might want some form of weighting for this sum
+            pt_nl_risk[i] = self.compute_nl_deg_for_fa_point(f,amps[i+1])
 
-        return nl_risk
+        # TODO: maybe want to account also for filtering degree in evaluation?
+        # TODO: some weighting over the input under analysis?
+        return (len(amps)-1)*np.average(pt_nl_risk, weights=amps[1:])
 
     ########################
     ### PLOTTING METHODS ###
