@@ -225,7 +225,7 @@ class faCharacterization():
     def check_input_on_rfc(self, ref, dt) :
         freqs, amps = fa_mapping_for_input(ref, dt, self.num_comp_rfr) # compute fa mapping
         # this one should be just an execution of the obtained random tree forest
-        return self.rfc.predict([np.hstack((freqs,amps))])
+        return self.rfc.predict_proba([np.hstack((freqs,amps))])
 
 
     ########################
