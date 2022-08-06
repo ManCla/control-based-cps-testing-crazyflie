@@ -48,7 +48,7 @@ for file in dir_content :
 
     ref = zTest(shape,a_gain,t_scale)
 
-    risk_out_bounds = faCharact.check_input_on_characterization(ref, dt)
+    risk_out_bounds = faCharact.check_input_on_rfr(ref, dt)
     nl_prediction = np.append(nl_prediction, np.array([risk_out_bounds]))
     # print("The risk of this input triggering non-linear behaviour is: {}".format(risk_out_bounds))
 
