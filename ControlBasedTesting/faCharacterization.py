@@ -33,6 +33,7 @@ spectrum_amp_threshold = 0.05 # absolute value above which we consider component
 # NOTE: shape names are assumed to be strings no longer than 20 characters
 faPoint_type = np.dtype([('freq', 'f4'),\
                          ('amp', 'f4'),\
+                         ('weight', 'f4'),\
                          ('deg_filtering', 'f4'),\
                          ('deg_non_lin', 'f4'),\
                          ('shape', np.unicode_, 20),\
@@ -133,11 +134,16 @@ class faCharacterization():
         # check that vectors contain info about consistent number of points
         if not(len(freqs)==len(amps) and len(amps)==len(deg_filtering)) :
             print("ERROR -- faCharacterization: inconsistent number of points info")
+        signal_power = sum(amps)
         # iterate over points
         for i in range(len(freqs)) :
+            # weight of this point
+            weight = amps[i]/signal_power # points local weight: a test with many points has less
+                                          # local information, weight using power percentage
             # add each of the points
             point = (freqs[i],\
                      amps[i],\
+                     weight,\
                      deg_filtering[i],\
                      deg_non_lin,\
                      test_shape,\
