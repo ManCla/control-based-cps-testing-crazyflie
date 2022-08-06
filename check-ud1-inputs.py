@@ -31,6 +31,10 @@ classifier_result = np.array([])
 regressor_result = np.array([])
 nl_actual = np.array([])
 
+total_count = 0
+false_negative = 0
+false_positive = 0
+
 # iteration over test files
 for file in dir_content :
 
@@ -50,13 +54,32 @@ for file in dir_content :
 
     # create reference generator object and evaluate regressor and classifier
     ref = zTest(shape,a_gain,t_scale)
-
-    risk_out_bounds_probability = faCharact.check_input_on_rfc(ref, dt)[0][0]
+    risk_out_bounds_probability = faCharact.check_input_on_rfc(ref, dt)[0][1]
     classifier_result = np.append(classifier_result, np.array([risk_out_bounds_probability]))
 
     nl_prediction = faCharact.check_input_on_rfr(ref, dt)[0]
     regressor_result = np.append(regressor_result, np.array([nl_prediction]))
 
+    # some statistics and print out wrong predictions
+    total_count = total_count+1
+    if real_nldg<0.15 : # non linear bh appears
+        if risk_out_bounds_probability>0.5 :
+            false_positive = false_positive+1
+    else :
+        if risk_out_bounds_probability<0.5 :
+            false_negative = false_negative+1
+            # print("false negative: "+file)
+    if risk_out_bounds_probability<0.01 :
+        pass
+        # print("test with zero risk? : "+file)
+    if real_nldg>0.9 : # non linear bh appears
+        print("\ntest with high nldg "+file)
+        print(" prediction: "+str(nl_prediction))
+        print(" classification: "+str(risk_out_bounds_probability))
+
+print("--> total count: "+str(total_count))
+print("--> false positives: "+str(false_positive))
+print("--> false negatives: "+str(false_negative))
 
 ##### PLOTTING #####
 
