@@ -106,7 +106,7 @@ class faCharacterization():
         else :
             # if provided, save with custom filename
             filename = name 
-        filename = "characterization-"+filename
+        filename = filename
         with open(filename, "wb") as f:
             pk.dump(self, f, protocol=pk.HIGHEST_PROTOCOL)
 

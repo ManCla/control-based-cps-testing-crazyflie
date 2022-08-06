@@ -14,6 +14,7 @@ from ControlBasedTesting.sanity_checks import check_filtering, check_non_lin_amp
 from CrazyflieSimulationPython.cfSimulator import cfSimulation, ZAnalysis, zTest
 
 data_directory = 'cfdata_nlmax015/'
+faCharacterization_directory = 'rfr_characterizations'
 
 ### TODO: set seed for random test generation ###
 
@@ -35,7 +36,7 @@ nl_max     = 0.15 # value of non-linear degree above which a test
 # number of frequency-amplitude components used for each test from the random forest regression
 num_fa_components_rfr = 20
 # number of classifiers used for random forest regression
-num_trees_rfr = 40
+num_trees_rfr = 200
 
 # crate object to store upperbound of nonlinear th based on sinus tests
 sinusoidal_upper_bound = NLthUpperbound(delta_amp, delta_freq, f_min, f_max)
@@ -177,10 +178,11 @@ for i,s in enumerate(zTest.shapes) :
 # INPUTS: frequency-amplitude behaviour points
 # OUTPUT: frequency-amplitude characterization
 
-# Use this to store a characterization object and ease the
-# checking of other inputs. See also script check_inputs.py
-#
-# faCharact.save()
+# Store the new characterization object if it doesn't exist already
+charact_file_name = "{}faComponents_{}trees".format(num_fa_components_rfr,num_trees_rfr)
+charact_file_path = faCharacterization_directory+'/'+charact_file_name
+if not(exists(charact_file_path)) :
+    faCharact.save(charact_file_path)
 
 # plot obtained characterization
 faCharact.plot_non_linearity_characterization(nl_max)
