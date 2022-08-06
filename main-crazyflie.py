@@ -34,7 +34,7 @@ nl_max     = 0.15 # value of non-linear degree above which a test
                   # is considered too non-linear and not interesting 
 
 # number of frequency-amplitude components used for each test from the random forest regression
-num_fa_components_rfr = 20
+num_fa_components_rfr = 40
 # number of classifiers used for random forest regression
 num_trees_rfr = 2000
 
