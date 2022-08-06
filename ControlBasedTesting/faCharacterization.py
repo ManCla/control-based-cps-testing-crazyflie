@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt # for plotting
 import pickle as pk # for saving object
 import time # for naming of data-files to save
 import scipy.fft as fft
+from sklearn.ensemble import RandomForestRegressor as RFR # used for random forest classification
 
 '''
 Class that contains the frequency amplitude characterization
@@ -21,10 +22,6 @@ but you can just iterate over the points.
 '''
 
 date_format    = '%Y%m%d_%H%M%S'
-
-use_lower_th_input_analysis = True  # use an absolute threshold to select only relevant components of input to check
-spectrum_amp_threshold = 0.05 # absolute value above which we consider components in spectra
-                              # consider setting to delta_amp or another characterization parameter
 
 ###################
 ### LOCAL TYPES ###
@@ -66,7 +63,7 @@ def get_filtering_colour(dof) :
 # local function that computes the fa_mapping for an arbitrary input
 # used both for plotting and analysis. But not used for building the
 # characterization, in that case the coordinates are given from outside.
-def fa_mapping_for_input(ref, dt) :
+def fa_mapping_for_input(ref, dt, num_maxima) :
     # compute input fft
     num_samples = int(ref.duration//dt)+1
     z_fft_freq = fft.fftfreq(num_samples, d=dt)
@@ -76,20 +73,17 @@ def fa_mapping_for_input(ref, dt) :
     z_fft_freq = np.array(z_fft_freq)[:len(z_fft_freq)//2]
     z_ref_fft  = np.array(z_ref_fft)[:len(z_ref_fft)//2]
 
-    if use_lower_th_input_analysis : # TODO: we just remove the very small components. Think it through
-        ref_peaks_indexes = [i for i in range(len(z_ref_fft)) if z_ref_fft[i]>spectrum_amp_threshold ]
-        freqs = z_fft_freq[ref_peaks_indexes]
-        amps  = z_ref_fft[ref_peaks_indexes]
-    else :
-        freqs = z_fft_freq
-        amps  = z_ref_fft
+    #get indexes of maxima elements - exclude zero frequency
+    ordered_amp_indexes = np.array(z_ref_fft[1:]).argsort()[-num_maxima:]+1
+    freqs = np.array(z_fft_freq)[ordered_amp_indexes]
+    amps  = np.array(z_ref_fft)[ordered_amp_indexes]
     return freqs, amps
 
 
 class faCharacterization():
     
     # TODO: nlth at this point should be required and not just optional
-    def __init__(self, df, da, num_comp_rfr, nlth=0):
+    def __init__(self, df, da, num_comp_rfr, num_trees, nlth=0):
         self.faPoints =  np.array([], dtype=faPoint_type) # init main vector containing all the points
         self.fa_rfr =  np.array([]) # table of fa points used for random forest regression
         self.nlth = nlth # non-linear threshold upper-bound, optional and used for plotting
@@ -99,6 +93,8 @@ class faCharacterization():
         self.amp_res  = da
         # number of fa components used for random forest regression
         self.num_comp_rfr = num_comp_rfr
+
+        self.rfr = RFR(num_trees)
 
     '''
     save object containing current characterization
@@ -200,12 +196,18 @@ class faCharacterization():
         pass
 
     '''
+    build random forest
+    '''
+    def create_forest_regressor(self) :
+        self.rfr = self.rfr.fit(self.fa_rfr[:,:-1],self.fa_rfr[:,-1])
+
+    '''
     check acceptance metric for an arbitrary input
     '''
-    def check_input_on_characterization(self, ref, dt) :
-        freqs, amps = fa_mapping_for_input(ref, dt) # compute fa mapping
+    def check_input_on_rfr(self, ref, dt) :
+        freqs, amps = fa_mapping_for_input(ref, dt, self.num_comp_rfr) # compute fa mapping
         # this one should be just an execution of the obtained random tree forest
-        return
+        return self.rfr.predict([np.hstack((freqs,amps))])
 
     ########################
     ### PLOTTING METHODS ###
@@ -269,7 +271,7 @@ class faCharacterization():
     '''
     def plot_input_mapping_on_characterization(self, ref, dt, non_linear_threshold) :
 
-        freqs, amps = fa_mapping_for_input(ref, dt) # compute fa mapping
+        freqs, amps = fa_mapping_for_input(ref, dt, self.num_comp_rfr) # compute fa mapping
         # actual plotting
         axs_nl = self.plot_non_linearity_characterization(non_linear_threshold)
         axs_nl.scatter(freqs, amps, s=25, c='black', marker="P")
