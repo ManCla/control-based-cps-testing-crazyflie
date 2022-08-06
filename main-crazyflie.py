@@ -32,6 +32,9 @@ max_amp    = 6    # [m]  assumed that max_amp>delta_amp
 nl_max     = 0.15 # value of non-linear degree above which a test
                   # is considered too non-linear and not interesting 
 
+# number of frequency-amplitude components used for each test from the random forest regression
+num_fa_components_rfr = 5
+
 # crate object to store upperbound of nonlinear th based on sinus tests
 sinusoidal_upper_bound = NLthUpperbound(delta_amp, delta_freq, f_min, f_max)
 
@@ -101,7 +104,7 @@ print("Phase 2 done: I have generated {} test cases for each of the {} shapes".\
 # OUTPUT: frequency-amplitude points and associated behaviour
 
 # create characterization object to store the sampled points
-faCharact = faCharacterization(freq_res, delta_amp, nlth=sinusoidal_upper_bound)
+faCharact = faCharacterization(freq_res, delta_amp, num_fa_components_rfr, nlth=sinusoidal_upper_bound,)
 
 for i, s in enumerate(zTest.shapes) :      ## iterate over shapes
     if not(s=='sinus') :     # we do not want to run sinus test cases at this step
@@ -124,6 +127,8 @@ for i, s in enumerate(zTest.shapes) :      ## iterate over shapes
                                    result.get_z_filter_degree(),\
                                    result.get_z_non_linear_degree(),\
                                    s, test['t_scale'], test['a_gain'])
+                top_freqs, top_amps = result.maxima_ref_fa_components(num_fa_components_rfr)
+                faCharact.add_test_random_forest_dataset(top_freqs, top_amps, result.get_z_non_linear_degree())
 
 # the results of the tests can be plotted on the frequency-amplitude
 # plane with the plot-ztests-fft.py script
