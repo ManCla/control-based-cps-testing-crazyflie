@@ -27,11 +27,14 @@ dir_content = os.listdir(directory)
 # filter out directories and look only at files
 dir_content = list(filter(lambda x:os.path.isfile(directory+'/'+x), dir_content))
 
-nl_prediction = np.array([])
+classifier_result = np.array([])
+regressor_result = np.array([])
 nl_actual = np.array([])
 
+# iteration over test files
 for file in dir_content :
 
+    # get test details
     use_case  = file.split('-')
     shape   = use_case[0]
     if not(shape=='ud1') :
@@ -39,26 +42,42 @@ for file in dir_content :
     a_gain  = float(use_case[1])
     t_scale = float(use_case[2])
     
-    # open file and get 
+    # open file and get ground truth
     test_results = fdh()
     test_results.open(directory+file, silent=True)
     real_nldg = test_results.get_z_non_linear_degree() # TODO: this does not fft the settling/warm-up!!!
     nl_actual = np.append(nl_actual, np.array([real_nldg]))
-    # print("Test {} has an actual nldg of: {}".format(file,real_nldg))
 
+    # create reference generator object and evaluate regressor and classifier
     ref = zTest(shape,a_gain,t_scale)
 
-    risk_out_bounds = faCharact.check_input_on_rfr(ref, dt)
-    nl_prediction = np.append(nl_prediction, np.array([risk_out_bounds]))
-    # print("The risk of this input triggering non-linear behaviour is: {}".format(risk_out_bounds))
+    risk_out_bounds_probability = faCharact.check_input_on_rfc(ref, dt)[0][0]
+    classifier_result = np.append(classifier_result, np.array([risk_out_bounds_probability]))
 
-fig, axs = plt.subplots(1, 1)
-axs.title.set_text("Closeness to performance bound VS non linear degree")
-axs.set_xlabel("Non-linear degree from test execution")
-axs.set_ylabel("Risk assessment from our characterizationn")
-axs.grid()
-lim = max(max(nl_actual),max(nl_prediction))+0.2
-axs.set_xlim([0, lim])
-axs.set_ylim([0, lim])
-axs.scatter(nl_actual, nl_prediction, s=2)
+    nl_prediction = faCharact.check_input_on_rfr(ref, dt)[0]
+    regressor_result = np.append(regressor_result, np.array([nl_prediction]))
+
+
+##### PLOTTING #####
+
+fig, axs = plt.subplots(2, 1)
+
+### PLOT CLASSIFIER RESUTLS
+axs[0].title.set_text("CLASSIFIER RESULTS")
+axs[0].set_xlabel("Non-linear degree from test execution")
+axs[0].set_ylabel("Probability of non-lin-deg>0.15 according to classifier")
+axs[0].grid()
+axs[0].set_xlim([0, max(nl_actual)+0.2])
+axs[0].set_ylim([0, 1.1])
+axs[0].scatter(nl_actual, classifier_result, s=2)
+
+### PLOT REGRESSOR RESUTLS
+axs[1].title.set_text("REGRESSOR RESULTS")
+axs[1].set_xlabel("Non-linear degree from test execution")
+axs[1].set_ylabel("Prediction of non linear degree from random forest")
+axs[1].grid()
+axs[1].set_xlim([0, max(nl_actual)+0.2])
+axs[1].set_ylim([0, max(regressor_result)+0.2])
+axs[1].scatter(nl_actual, regressor_result, s=2)
+
 plt.show()
