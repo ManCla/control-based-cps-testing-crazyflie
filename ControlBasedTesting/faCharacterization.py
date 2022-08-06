@@ -138,12 +138,30 @@ class faCharacterization():
         if not(len(freqs)==len(amps) and len(amps)==len(deg_filtering)) :
             print("ERROR -- faCharacterization: inconsistent number of points info")
         signal_power = sum(amps)
-        # iterate over points
-        for i in range(len(freqs)) :
-            # weight of this point
+
+        i  = 0 # index to cover the freqs vector
+        ii = 0 # index used in the case that we insert two adjacent points
+        # first insert the tests that are in frequency ranges already explored
+        for j, f in enumerate(self.faPoints['freq']) :
+            while i<len(freqs) and f>freqs[i] :
+                weight = amps[i]/signal_power # points local weight: a test with many points has less
+                                              # local information, weight using power percentage
+                point = (freqs[i],\
+                         amps[i],\
+                         weight,\
+                         deg_filtering[i],\
+                         deg_non_lin,\
+                         test_shape,\
+                         test_tScale,\
+                         test_aScale,\
+                        )
+                self.faPoints = np.insert(self.faPoints,j+ii,np.array(point,dtype=faPoint_type))
+                i  = i+1
+                ii = ii+1
+        # append remaining elements of this test
+        while i<len(freqs):
             weight = amps[i]/signal_power # points local weight: a test with many points has less
                                           # local information, weight using power percentage
-            # add each of the points
             point = (freqs[i],\
                      amps[i],\
                      weight,\
@@ -153,15 +171,17 @@ class faCharacterization():
                      test_tScale,\
                      test_aScale,\
                     )
-            # insert point in vector in order of frequencies
-            highest_freq = True
-            for j, pt in enumerate(self.faPoints) :
-                if pt['freq']>freqs[i] :
-                    self.faPoints = np.insert(self.faPoints,j,np.array(point,dtype=faPoint_type))
-                    highest_freq = False
-                    break
-            if highest_freq :
-                self.faPoints = np.append(self.faPoints,np.array(point,dtype=faPoint_type))
+            self.faPoints = np.append(self.faPoints,np.array(point,dtype=faPoint_type))
+            i = i+1
+
+    '''
+    verification function that checks if add_test has been doing a good job at inserting 
+    the fa points ordered by frequency
+    '''
+    def check_freq_ordering(self) :
+        if any([self.faPoints['freq'][i]-self.faPoints['freq'][i-1]<0 for i in range(1,len(self.faPoints['freq']))]) :
+            print("ERROR faCharacterization -- faPoints not ordered by frequency")
+        exit()
 
     def add_test_random_forest_dataset(self, freqs, amps, deg_non_lin) :
         if not(len(freqs)==self.num_comp_rfr and len(amps)==self.num_comp_rfr) :
