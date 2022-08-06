@@ -70,12 +70,7 @@ for file in dir_content :
             false_negative = false_negative+1
             # print("false negative: "+file)
     if risk_out_bounds_probability<0.01 :
-        pass
-        # print("test with zero risk? : "+file)
-    if real_nldg>0.9 : # non linear bh appears
-        print("\ntest with high nldg "+file)
-        print(" prediction: "+str(nl_prediction))
-        print(" classification: "+str(risk_out_bounds_probability))
+        print("test with zero risk? : "+file)
 
 print("--> total count: "+str(total_count))
 print("--> false positives: "+str(false_positive))
@@ -92,6 +87,7 @@ axs[0].set_ylabel("Probability of non-lin-deg>0.15 according to classifier")
 axs[0].grid()
 axs[0].set_xlim([0, max(nl_actual)+0.2])
 axs[0].set_ylim([0, 1.1])
+axs[0].plot([faCharact.rfc_non_linear_threshold]*2,[0,2], linestyle='dashed', c='black')
 axs[0].scatter(nl_actual, classifier_result, s=2)
 
 ### PLOT REGRESSOR RESUTLS
@@ -101,6 +97,7 @@ axs[1].set_ylabel("Prediction of non linear degree from random forest")
 axs[1].grid()
 axs[1].set_xlim([0, max(nl_actual)+0.2])
 axs[1].set_ylim([0, max(regressor_result)+0.2])
+axs[1].plot([faCharact.rfc_non_linear_threshold]*2,[0,2], linestyle='dashed', c='black')
 axs[1].scatter(nl_actual, regressor_result, s=2)
 
 plt.show()
