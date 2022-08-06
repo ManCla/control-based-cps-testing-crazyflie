@@ -219,6 +219,9 @@ class faCharacterization():
         self.rfc_non_linear_threshold = non_linear_threshold
         self.rfc = self.rfc.fit(self.fa_rfr[:,:-1],[x>non_linear_threshold for x in self.fa_rfr[:,-1]])
 
+    def training_score(self) :
+        return self.rfc.score(self.fa_rfr[:,:-1],[x>self.rfc_non_linear_threshold for x in self.fa_rfr[:,-1]])
+
     '''
     check acceptance metric for an arbitrary input
     '''
