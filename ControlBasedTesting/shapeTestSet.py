@@ -77,7 +77,8 @@ class shapeTestSet(object):
     TODO : introduce some quantization in the sampling, there is no need for such precision
            and it would allow recycling tests
     '''
-    def generate_test_set(self, freqs_under_test):
+    def generate_test_set(self, freqs_under_test,seed):
+        rnd.seed(seed)
         # init test case variables
         self.test_cases = np.array([], dtype=test_type)
         # scale up float to integer

@@ -81,15 +81,14 @@ print("desired frequency resolution seems to be {}. Will sample {} freqs for eac
 
 test_set = []
 
-rnd.seed(1) # seed for repeatibility
-
 # generate testset
 for i, s in enumerate(zTest.shapes) :
     if not(s=='sinus') : # we are not interested in sinus test cases at this step
         print('generating test set for shape: '+s)
         # TODO: dt should not be hardcoded
         test_set.append(shapeTestSet(zTest,s,sinusoidal_upper_bound,0.001))
-        test_set[i].generate_test_set(freqs_under_test)
+        seed = i*100000+1 # used to be able to increase tests gradually while keeping randomness
+        test_set[i].generate_test_set(freqs_under_test,seed)
         # test_set[i].plot_test_set()
     else :
         # just for consistency of vector but we don't really
