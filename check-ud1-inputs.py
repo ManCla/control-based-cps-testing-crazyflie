@@ -97,6 +97,7 @@ axs[1].set_ylabel("Prediction of non linear degree from random forest")
 axs[1].grid()
 axs[1].set_xlim([0, max(nl_actual)+0.2])
 axs[1].set_ylim([0, max(regressor_result)+0.2])
+axs[1].plot([0,3],[faCharact.rfc_non_linear_threshold]*2, linestyle='dashed', c='black')
 axs[1].plot([faCharact.rfc_non_linear_threshold]*2,[0,2], linestyle='dashed', c='black')
 axs[1].scatter(nl_actual, regressor_result, s=2)
 
