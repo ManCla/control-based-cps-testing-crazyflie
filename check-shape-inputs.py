@@ -19,6 +19,7 @@ to avoid having to re-run phases 1, 2, and 3 every time.
 directory = "cfdata_nlmax015/"
 dt = 0.001
 non_linear_threshold = 0.15
+shape_for_validation = 'trapezoidal'
 
 # unpack command line inputs
 faCharact = faCharacterization.open(sys.argv[1])
@@ -41,7 +42,7 @@ for file in dir_content :
     # get test details
     use_case  = file.split('-')
     shape   = use_case[0]
-    if not(shape=='ud1') :
+    if not(shape==shape_for_validation) :
         continue
     a_gain  = float(use_case[1])
     t_scale = float(use_case[2])
