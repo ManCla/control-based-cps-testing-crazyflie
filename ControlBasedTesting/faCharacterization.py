@@ -96,8 +96,8 @@ class faCharacterization():
         self.num_comp_rfr = num_comp_rfr
 
         # initialize random forest regressor and classifier
-        self.rfr = RFR(num_trees,bootstrap=False)
-        self.rfc = RFC(num_trees,bootstrap=False)
+        self.rfr = RFR(num_trees,bootstrap=False,n_jobs=-1)
+        self.rfc = RFC(num_trees,bootstrap=False,n_jobs=-1)
 
     '''
     save object containing current characterization
