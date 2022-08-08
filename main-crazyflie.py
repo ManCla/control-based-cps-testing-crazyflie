@@ -138,7 +138,7 @@ for i, s in enumerate(zTest.shapes) :      ## iterate over shapes
                 if exclude_high_freq_tests and all_filtered :
                     print("I'm excluding from rf dataset: "+file_path)
                 else :
-                    top_freqs, top_amps = result.maxima_ref_fa_components(num_fa_components_rfr, f_min, f_max)
+                    top_freqs, top_amps = result.maxima_ref_fa_components(num_fa_components_rfr)
                     faCharact.add_test_random_forest_dataset(top_freqs, top_amps, result.get_z_non_linear_degree())
 
 print("Phase 3: building random forest regressor")
