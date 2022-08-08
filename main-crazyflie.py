@@ -33,6 +33,9 @@ max_amp    = 6    # [m]  assumed that max_amp>delta_amp
 nl_max     = 0.15 # value of non-linear degree above which a test
                   # is considered too non-linear and not interesting 
 
+exclude_high_freq_tests = True  # when true, tests that involve only freq peaks above a given
+                                # estimate of the bandwidth are excluded from the characterization
+
 # number of frequency-amplitude components used for each test from the random forest regression
 num_fa_components_rfr = 40
 # number of classifiers used for random forest regression
@@ -129,8 +132,14 @@ for i, s in enumerate(zTest.shapes) :      ## iterate over shapes
                                    result.get_z_filter_degree(),\
                                    result.get_z_non_linear_degree(),\
                                    s, test['t_scale'], test['a_gain'])
-                top_freqs, top_amps = result.maxima_ref_fa_components(num_fa_components_rfr)
-                faCharact.add_test_random_forest_dataset(top_freqs, top_amps, result.get_z_non_linear_degree())
+                # include only tests with at least one relevant freq
+                # TODO: condition should be lin bh and all freqs filtered
+                all_filtered = result.get_z_non_linear_degree()<nl_max and min(result.get_z_filter_degree()[1:])>0.5
+                if exclude_high_freq_tests and all_filtered :
+                    print("I'm excluding from rf dataset: "+file_path)
+                else :
+                    top_freqs, top_amps = result.maxima_ref_fa_components(num_fa_components_rfr, f_min, f_max)
+                    faCharact.add_test_random_forest_dataset(top_freqs, top_amps, result.get_z_non_linear_degree())
 
 print("Phase 3: building random forest regressor")
 faCharact.create_forest_regressor()
@@ -181,6 +190,8 @@ for i,s in enumerate(zTest.shapes) :
 
 # Store the new characterization object if it doesn't exist already
 charact_file_name = "{}faComponents_{}trees".format(num_fa_components_rfr,num_trees_rfr)
+if exclude_high_freq_tests :
+    charact_file_name = charact_file_name+"_noHighFreq"
 charact_file_path = faCharacterization_directory+'/'+charact_file_name
 if not(exists(charact_file_path)) :
     faCharact.save(charact_file_path)
