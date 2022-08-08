@@ -31,6 +31,9 @@ max_amp    = 6    # [m]  assumed that max_amp>delta_amp
 nl_max     = 0.15 # value of non-linear degree above which a test
                   # is considered too non-linear and not interesting 
 
+uniform_amps = True # if true generates uniformly amplitudes around the non-lin threshold
+                    # to get more balanced sampling of linear and non-linear behaviour
+
 exclude_high_freq_tests = True  # when true, tests that involve only freq peaks above a given
                                 # estimate of the bandwidth are excluded from the characterization
 
@@ -91,7 +94,7 @@ for i, s in enumerate(zTest.shapes) :
         # TODO: dt should not be hardcoded
         test_set.append(shapeTestSet(zTest,s,sinusoidal_upper_bound,0.001))
         seed = i*100000+1 # used to be able to increase tests gradually while keeping randomness
-        test_set[i].generate_test_set(freqs_under_test,seed)
+        test_set[i].generate_test_set(freqs_under_test,seed, uniform_amps)
         # test_set[i].plot_test_set()
     else :
         # just for consistency of vector but we don't really
@@ -193,6 +196,8 @@ if do_sanity_checks :
 charact_file_name = "{}faComponents_{}trees".format(num_fa_components_rfr,num_trees_rfr)
 if exclude_high_freq_tests :
     charact_file_name = charact_file_name+"_noHighFreq"
+if uniform_amps :
+    charact_file_name = charact_file_name+"_uniformSampling"
 charact_file_path = faCharacterization_directory+'/'+charact_file_name
 if not(exists(charact_file_path)) :
     faCharact.save(charact_file_path)
