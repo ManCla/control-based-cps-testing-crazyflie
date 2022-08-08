@@ -89,7 +89,6 @@ class shapeTestSet(object):
             # get threshold and rescale for this specific shape
             a_max = self.nlThreshold.get_th_at_freq(f)/self.faPt11.a_Highest()
             num_amps = int(self.nlThreshold.get_th_at_freq(f)/self.nlThreshold.delta_amp)
-            print(num_amps)
             if a_min>a_max :
                 print("ERROR shapeTestSet: a_min>a_max when generating test set for shape "+self.shape)
                 a_max = a_min*2 # to void program crashing. Should not be needed
