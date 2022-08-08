@@ -79,7 +79,7 @@ print("Phase 1 done: I have sampled {} frequencies".format(sinusoidal_upper_boun
 freq_res = 0.05 # sinusoidal_upper_bound.get_freq_resolution()
 num_freqs = int((f_max-f_min)/freq_res)
 freqs_under_test = np.linspace(f_min,f_max,num=num_freqs)
-print("desired frequency resolution seems to be {}. Will sample {} freqs for each shape".format\
+print(" -- desired frequency resolution seems to be {}. Will sample {} freqs for each shape".format\
      (freq_res, num_freqs))
 
 test_set = []
@@ -87,7 +87,7 @@ test_set = []
 # generate testset
 for i, s in enumerate(zTest.shapes) :
     if not(s=='sinus') : # we are not interested in sinus test cases at this step
-        print('generating test set for shape: '+s)
+        print('Phase 2: generating test set for shape: '+s)
         # TODO: dt should not be hardcoded
         test_set.append(shapeTestSet(zTest,s,sinusoidal_upper_bound,0.001))
         seed = i*100000+1 # used to be able to increase tests gradually while keeping randomness
