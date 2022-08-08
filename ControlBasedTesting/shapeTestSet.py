@@ -77,33 +77,37 @@ class shapeTestSet(object):
     TODO : introduce some quantization in the sampling, there is no need for such precision
            and it would allow recycling tests
     '''
-    def generate_test_set(self, freqs_under_test,seed):
+    def generate_test_set(self, freqs_under_test,seed, uniform_amps):
         rnd.seed(seed)
         # init test case variables
         self.test_cases = np.array([], dtype=test_type)
-        # scale up float to integer
-        t_min = int(self.t_scale_min*scale_factor)
-        t_max = int(self.t_scale_max*scale_factor)+1
         a_min = self.nlThreshold.delta_amp
         for i,f in enumerate(freqs_under_test) :
-            # random sampling on integers, then scaled down to get float
             test_t_scale = f/self.faPt11.freq_of_max_amp()
             if test_t_scale<self.t_scale_min or test_t_scale>self.t_scale_max :
                 print("ERROR obtained a time scaling out of bounds")
             # get threshold and rescale for this specific shape
             a_max = self.nlThreshold.get_th_at_freq(f)/self.faPt11.a_Highest()
             num_amps = int(self.nlThreshold.get_th_at_freq(f)/self.nlThreshold.delta_amp)
+            print(num_amps)
             if a_min>a_max :
                 print("ERROR shapeTestSet: a_min>a_max when generating test set for shape "+self.shape)
                 a_max = a_min*2 # to void program crashing. Should not be needed
                                 # after introducing lower bound in binary search.
             for ii in range(0,num_amps):
-                rand_coef = rnd.betavariate(5,0.8) # TODO: study better beta distribution parameters
-                                                   # (2,1) gives a "ramp" distribution
-                test_a_gain  = a_min + rand_coef*(a_max-a_min)
-                # store
-                self.test_cases = np.append(self.test_cases,np.array((test_t_scale, test_a_gain),\
-                                          dtype=test_type))
+                if not(uniform_amps) :
+                    rand_coef = rnd.betavariate(5,0.8) # TODO: study better beta distribution parameters
+                                                       # (2,1) gives a "ramp" distribution
+                    test_a_gain  = a_min + rand_coef*(a_max-a_min)
+                    # store
+                    self.test_cases = np.append(self.test_cases,np.array((test_t_scale, test_a_gain),\
+                                              dtype=test_type))
+                else :
+                    rand_coef = rnd.random() # get random number in [0,1]
+                    test_a_gain  = a_min + 2*rand_coef*(a_max-a_min)
+                    # store
+                    self.test_cases = np.append(self.test_cases,np.array((test_t_scale, test_a_gain),\
+                                              dtype=test_type))
 
     '''
     Given a time scaling coefficient and an amplitude coefficient
