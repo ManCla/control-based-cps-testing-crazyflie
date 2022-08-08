@@ -73,7 +73,7 @@ print("Phase 1 done: I have sampled {} frequencies".format(sinusoidal_upper_boun
 # OUTPUT: a vector of length num_tests (d,A) pairs for each shape
 
 # uniform sampling of frequencies
-freq_res = sinusoidal_upper_bound.get_freq_resolution()
+freq_res = 0.05 # sinusoidal_upper_bound.get_freq_resolution()
 num_freqs = int((f_max-f_min)/freq_res)
 freqs_under_test = np.linspace(f_min,f_max,num=num_freqs)
 print("desired frequency resolution seems to be {}. Will sample {} freqs for each shape".format\
