@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt # for plotting
 import pickle as pk # for saving object
 import time # for naming of data-files to save
 import scipy.fft as fft
+import scipy.signal as signal # for peaks detection
 from sklearn.ensemble import RandomForestRegressor as RFR # used for random forest classification
 from sklearn.ensemble import RandomForestClassifier as RFC # used for random forest classification
 
@@ -66,18 +67,33 @@ def get_filtering_colour(dof) :
 # characterization, in that case the coordinates are given from outside.
 def fa_mapping_for_input(ref, dt, num_maxima) :
     # compute input fft
-    num_samples = int(ref.duration//dt)+1
+    start = 5
+    base_hover = 1
+    peak_threshold_percentage = 0.05 # percentage of max ref peak above which we look for more peaks in spectra
+    duration = ref.duration-start
+    num_samples = int(duration//dt)+1
     z_fft_freq = fft.fftfreq(num_samples, d=dt)
-    ref_time_series = [ref.refGen(x)[2] for x in np.linspace(0,ref.duration, num_samples)]
+    ref_time_series = [ref.refGen(x)[2]-base_hover for x in np.linspace(start,duration+start, num_samples)]
     z_ref_fft  = [abs(x) for x in fft.fft(ref_time_series, norm="forward", workers=-1, overwrite_x=True)]
     # spectrum is symmetric
     z_fft_freq = np.array(z_fft_freq)[:len(z_fft_freq)//2]
     z_ref_fft  = np.array(z_ref_fft)[:len(z_ref_fft)//2]
 
+    peak_threshold = peak_threshold_percentage * max(z_ref_fft[1:]) # min value of peaks relative to ref
+    # zero frequency is always included because it is always important but also always excluded by find_peaks
+    ref_peaks_indexes, _  = signal.find_peaks(z_ref_fft, height= peak_threshold)
+    ref_peaks_indexes     = np.hstack(([0],ref_peaks_indexes))
+    z_ref_freq_peaks = np.array(z_fft_freq)[ref_peaks_indexes]
+    z_ref_amp_peaks  = np.array(z_ref_fft)[ref_peaks_indexes]
+
+    # zero padding so we have enough datapoints
+    z_ref_freq_peaks = np.hstack((z_ref_freq_peaks,np.zeros(num_maxima)))
+    z_ref_amp_peaks = np.hstack((z_ref_amp_peaks,np.zeros(num_maxima)))
+
     #get indexes of maxima elements - exclude zero frequency
-    ordered_amp_indexes = np.array(z_ref_fft[1:]).argsort()[-num_maxima:]+1
-    freqs = np.array(z_fft_freq)[ordered_amp_indexes]
-    amps  = np.array(z_ref_fft)[ordered_amp_indexes]
+    ordered_amp_indexes = np.array(z_ref_amp_peaks[1:]).argsort()[-num_maxima:]+1
+    freqs = np.array(z_ref_freq_peaks)[ordered_amp_indexes]
+    amps  = np.array(z_ref_amp_peaks)[ordered_amp_indexes]
     return freqs, amps
 
 
@@ -96,8 +112,8 @@ class faCharacterization():
         self.num_comp_rfr = num_comp_rfr
 
         # initialize random forest regressor and classifier
-        self.rfr = RFR(num_trees,bootstrap=False,n_jobs=-1)
-        self.rfc = RFC(num_trees,bootstrap=False,n_jobs=-1)
+        self.rfr = RFR(num_trees,bootstrap=False)
+        self.rfc = RFC(num_trees,bootstrap=False)
 
     '''
     save object containing current characterization
