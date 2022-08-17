@@ -35,6 +35,8 @@ faPoint_type = np.dtype([('freq', 'f4'),\
                          ('weight', 'f4'),\
                          ('deg_filtering', 'f4'),\
                          ('deg_non_lin', 'f4'),\
+                         ('saturation_perc', 'f4'),\
+                         ('hit_ground_perc', 'f4'),\
                          ('shape', np.unicode_, 20),\
                          ('t_scale', 'f4'),\
                          ('a_gain', 'f4')
@@ -61,6 +63,16 @@ def get_filtering_colour(dof) :
     dof_sat = min(dof,1)
     filter_color = [0,1-dof_sat,dof_sat]
     return filter_color
+
+# local function to get colour associated to motors saturation time.
+# TODO: implemented using the filtering colour plotting fcn
+def get_motors_sat_colour(dof) :
+    return get_filtering_colour(dof)
+
+# local function to get colour associated to hit ground time.
+# TODO: implemented using the filtering colour plotting fcn
+def get_hit_ground_colour(dof) :
+    return get_filtering_colour(dof)
 
 # local function that computes the fa_mapping for an arbitrary input
 # used both for plotting and analysis 
@@ -119,7 +131,8 @@ class faCharacterization():
     '''
     add a set of points coming from the same test
     '''
-    def add_test(self, freqs, amps, deg_filtering, deg_non_lin, test_shape, test_tScale, test_aScale):
+    def add_test(self, freqs, amps, deg_filtering, deg_non_lin, saturation, hit_ground,\
+                 test_shape, test_tScale, test_aScale):
         # check that vectors contain info about consistent number of points
         if not(len(freqs)==len(amps) and len(amps)==len(deg_filtering)) :
             print("ERROR -- faCharacterization: inconsistent number of points info")
@@ -137,6 +150,8 @@ class faCharacterization():
                          weight,\
                          deg_filtering[i],\
                          deg_non_lin,\
+                         saturation,\
+                         hit_ground,\
                          test_shape,\
                          test_tScale,\
                          test_aScale,\
@@ -153,6 +168,8 @@ class faCharacterization():
                      weight,\
                      deg_filtering[i],\
                      deg_non_lin,\
+                     saturation,\
+                     hit_ground,\
                      test_shape,\
                      test_tScale,\
                      test_aScale,\
@@ -228,6 +245,52 @@ class faCharacterization():
         return axs # used for adding more elements to the plot
 
     '''
+    plot motors saturation
+    '''
+    def plot_motors_saturation_characterization(self) :
+
+        fig, axs = plt.subplots(1, 1)
+        if not(self.nlth==0) : # if sinusoidal based threshold is provided, use it to plot target area
+            # plot frequency limits
+            axs.plot([self.nlth.f_min,self.nlth.f_min],[0,self.nlth.get_maximum_amp()], linestyle='dashed', c='black')
+            axs.plot([self.nlth.f_max,self.nlth.f_max],[0,self.nlth.get_maximum_amp()], linestyle='dashed', c='black')
+            # plot linearity upper bounds as from pre-estimation
+            axs.plot(self.nlth.nlth['freq'],self.nlth.nlth['A_min'])
+            axs.plot(self.nlth.nlth['freq'],self.nlth.nlth['A_max'])
+        # plot aesthetics
+        axs.set_xscale('log')
+        axs.set_yscale('log')
+        axs.grid()
+
+        motor_sat_colours = [get_motors_sat_colour(x) for x in self.faPoints['saturation_perc']]
+        axs.scatter(self.faPoints['freq'], self.faPoints['amp'], s=2, c=motor_sat_colours)
+
+        return axs # used for adding more elements to the plot
+
+    '''
+    plot hit ground
+    '''
+    def plot_hit_ground_characterization(self) :
+
+        fig, axs = plt.subplots(1, 1)
+        if not(self.nlth==0) : # if sinusoidal based threshold is provided, use it to plot target area
+            # plot frequency limits
+            axs.plot([self.nlth.f_min,self.nlth.f_min],[0,self.nlth.get_maximum_amp()], linestyle='dashed', c='black')
+            axs.plot([self.nlth.f_max,self.nlth.f_max],[0,self.nlth.get_maximum_amp()], linestyle='dashed', c='black')
+            # plot linearity upper bounds as from pre-estimation
+            axs.plot(self.nlth.nlth['freq'],self.nlth.nlth['A_min'])
+            axs.plot(self.nlth.nlth['freq'],self.nlth.nlth['A_max'])
+        # plot aesthetics
+        axs.set_xscale('log')
+        axs.set_yscale('log')
+        axs.grid()
+
+        hit_ground_colours = [get_hit_ground_colour(x) for x in self.faPoints['hit_ground_perc']]
+        axs.scatter(self.faPoints['freq'], self.faPoints['amp'], s=2, c=hit_ground_colours)
+
+        return axs # used for adding more elements to the plot
+
+    '''
     plot the freq-amp mapping of a given input against the characterization.
     INPUT:
      - reference generator object
@@ -268,13 +331,13 @@ class faCharacterization():
 if __name__ == "__main__":
     charact = faCharacterization()
 
-    charact.add_test([1],[1],[0],0,'my_shape',2,3)
-    charact.add_test([3],[1],[0],1,'my_shape',2,3)
-    charact.add_test([3],[1],[0],1,'my_shape',2,3)
-    charact.add_test([4],[2],[0],1,'my_shape',2,3)
-    charact.add_test([2],[2],[0],1,'my_shape',2,3)
-    charact.add_test([2.5],[2],[0],1,'my_shape',2,3)
-    charact.add_test([3],[1],[0],1,'my_shape',2,3)
+    charact.add_test([1],[1],[0],0,0.5,0.5,'my_shape',2,3)
+    charact.add_test([3],[1],[0],1,0.5,0.5,'my_shape',2,3)
+    charact.add_test([3],[1],[0],1,0.5,0.5,'my_shape',2,3)
+    charact.add_test([4],[2],[0],1,0.5,0.5,'my_shape',2,3)
+    charact.add_test([2],[2],[0],1,0.5,0.5,'my_shape',2,3)
+    charact.add_test([2.5],[2],[0],1,0.5,0.5,'my_shape',2,3)
+    charact.add_test([3],[1],[0],1,0.5,0.5,'my_shape',2,3)
 
     # test if frequency ordering is working
     freqs = charact.faPoints['freq']
@@ -283,4 +346,5 @@ if __name__ == "__main__":
         print("ERROR: faPoints vector is not ordered!")
 
     charact.plot_non_linearity_characterization(0.3)
+    charact.plot_motors_saturation_characterization()
     plt.show()

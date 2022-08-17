@@ -121,6 +121,8 @@ for i, s in enumerate(zTest.shapes) :      ## iterate over shapes
                                result.get_z_ref_fft_peaks(),\
                                result.get_z_filter_degree(),\
                                result.get_z_non_linear_degree(),\
+                               result.get_motors_saturated(),\
+                               result.get_hit_ground(),\
                                s, test['t_scale'], test['a_gain'])
 
 # the results of the tests can be plotted on the frequency-amplitude
