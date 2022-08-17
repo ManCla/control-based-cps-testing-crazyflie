@@ -201,8 +201,9 @@ class faCharacterization():
        here it is used for defining the colour gradient when plotting
     '''
     def plot_non_linearity_characterization(self, non_linear_threshold) :
-        
+
         fig, axs = plt.subplots(1, 1)
+        axs.title.set_text('degree of non linearity')
         if not(self.nlth==0) : # if sinusoidal based threshold is provided, use it to plot target area
             # plot frequency limits
             axs.plot([self.nlth.f_min,self.nlth.f_min],[0,self.nlth.get_maximum_amp()], linestyle='dashed', c='black')
@@ -226,6 +227,7 @@ class faCharacterization():
     def plot_filtering_characterization(self, non_linear_threshold) :
 
         fig, axs = plt.subplots(1, 1)
+        axs.title.set_text('degree of filtering')
         if not(self.nlth==0) : # if sinusoidal based threshold is provided, use it to plot target area
             # plot frequency limits
             axs.plot([self.nlth.f_min,self.nlth.f_min],[0,self.nlth.get_maximum_amp()], linestyle='dashed', c='black')
@@ -250,6 +252,7 @@ class faCharacterization():
     def plot_motors_saturation_characterization(self) :
 
         fig, axs = plt.subplots(1, 1)
+        axs.title.set_text('motors saturation time percentage')
         if not(self.nlth==0) : # if sinusoidal based threshold is provided, use it to plot target area
             # plot frequency limits
             axs.plot([self.nlth.f_min,self.nlth.f_min],[0,self.nlth.get_maximum_amp()], linestyle='dashed', c='black')
@@ -273,6 +276,7 @@ class faCharacterization():
     def plot_hit_ground_characterization(self) :
 
         fig, axs = plt.subplots(1, 1)
+        axs.title.set_text('hit the ground time percentage')
         if not(self.nlth==0) : # if sinusoidal based threshold is provided, use it to plot target area
             # plot frequency limits
             axs.plot([self.nlth.f_min,self.nlth.f_min],[0,self.nlth.get_maximum_amp()], linestyle='dashed', c='black')
