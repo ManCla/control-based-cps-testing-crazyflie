@@ -177,6 +177,31 @@ class faCharacterization():
         # find frequency threshold
         pass
 
+    ##########################
+    ### PLOTTING FUNCTIONS ###
+    ##########################
+
+    '''
+    plot sinusoidal-tests-based upper-bounding of non-linear threshold
+    NOTE: this is used as a base for the other characterization plotting functions!
+    '''
+    def plot_nlth_upperbound(self) :
+
+        _, axs = plt.subplots(1, 1)
+        # plot frequency limits
+        axs.plot([self.nlth.f_min,self.nlth.f_min],[0,self.nlth.get_maximum_amp()], linestyle='dashed', c='black')
+        axs.plot([self.nlth.f_max,self.nlth.f_max],[0,self.nlth.get_maximum_amp()], linestyle='dashed', c='black')
+        # plot linearity upper bounds as from pre-estimation
+        axs.plot(self.nlth.nlth['freq'],self.nlth.nlth['A_min'])
+        axs.plot(self.nlth.nlth['freq'],self.nlth.nlth['A_max'])
+        # plot aesthetics
+        axs.set_xscale('log')
+        axs.set_yscale('log')
+        axs.grid()
+
+        return axs # used for adding more elements to the plot
+
+
     '''
     plot non-linearity characterization
      - nl_max is the nldeg threshold above which a test is considered too much non-linear
@@ -184,20 +209,8 @@ class faCharacterization():
     '''
     def plot_non_linearity_characterization(self, non_linear_threshold) :
 
-        fig, axs = plt.subplots(1, 1)
+        axs = self.plot_nlth_upperbound()
         axs.title.set_text('degree of non linearity')
-        if not(self.nlth==0) : # if sinusoidal based threshold is provided, use it to plot target area
-            # plot frequency limits
-            axs.plot([self.nlth.f_min,self.nlth.f_min],[0,self.nlth.get_maximum_amp()], linestyle='dashed', c='black')
-            axs.plot([self.nlth.f_max,self.nlth.f_max],[0,self.nlth.get_maximum_amp()], linestyle='dashed', c='black')
-            # plot linearity upper bounds as from pre-estimation
-            axs.plot(self.nlth.nlth['freq'],self.nlth.nlth['A_min'])
-            axs.plot(self.nlth.nlth['freq'],self.nlth.nlth['A_max'])
-        # plot aesthetics
-        axs.set_xscale('log')
-        axs.set_yscale('log')
-        axs.grid()
-
         nldg_colours = [get_nldg_colour(x, non_linear_threshold) for x in self.faPoints['deg_non_lin']]
         axs.scatter(self.faPoints['freq'], self.faPoints['amp'], s=2, c=nldg_colours)
 
@@ -208,20 +221,8 @@ class faCharacterization():
     '''
     def plot_filtering_characterization(self, non_linear_threshold) :
 
-        fig, axs = plt.subplots(1, 1)
+        axs = self.plot_nlth_upperbound()
         axs.title.set_text('degree of filtering')
-        if not(self.nlth==0) : # if sinusoidal based threshold is provided, use it to plot target area
-            # plot frequency limits
-            axs.plot([self.nlth.f_min,self.nlth.f_min],[0,self.nlth.get_maximum_amp()], linestyle='dashed', c='black')
-            axs.plot([self.nlth.f_max,self.nlth.f_max],[0,self.nlth.get_maximum_amp()], linestyle='dashed', c='black')
-            # plot linearity upper bounds as from pre-estimation
-            axs.plot(self.nlth.nlth['freq'],self.nlth.nlth['A_min'])
-            axs.plot(self.nlth.nlth['freq'],self.nlth.nlth['A_max'])
-        # plot aesthetics
-        axs.set_xscale('log')
-        axs.set_yscale('log')
-        axs.grid()
-
         lin_points = np.array([x for x in self.faPoints if x['deg_non_lin']<non_linear_threshold], dtype=faPoint_type)
         dof_colours = [get_filtering_colour(x['deg_filtering']) for x in lin_points]
         axs.scatter(lin_points['freq'], lin_points['amp'], s=2, c=dof_colours)
@@ -233,20 +234,8 @@ class faCharacterization():
     '''
     def plot_motors_saturation_characterization(self) :
 
-        fig, axs = plt.subplots(1, 1)
+        axs = self.plot_nlth_upperbound()
         axs.title.set_text('motors saturation time percentage')
-        if not(self.nlth==0) : # if sinusoidal based threshold is provided, use it to plot target area
-            # plot frequency limits
-            axs.plot([self.nlth.f_min,self.nlth.f_min],[0,self.nlth.get_maximum_amp()], linestyle='dashed', c='black')
-            axs.plot([self.nlth.f_max,self.nlth.f_max],[0,self.nlth.get_maximum_amp()], linestyle='dashed', c='black')
-            # plot linearity upper bounds as from pre-estimation
-            axs.plot(self.nlth.nlth['freq'],self.nlth.nlth['A_min'])
-            axs.plot(self.nlth.nlth['freq'],self.nlth.nlth['A_max'])
-        # plot aesthetics
-        axs.set_xscale('log')
-        axs.set_yscale('log')
-        axs.grid()
-
         motor_sat_colours = [get_motors_sat_colour(x) for x in self.faPoints['saturation_perc']]
         axs.scatter(self.faPoints['freq'], self.faPoints['amp'], s=2, c=motor_sat_colours)
 
@@ -257,20 +246,8 @@ class faCharacterization():
     '''
     def plot_hit_ground_characterization(self) :
 
-        fig, axs = plt.subplots(1, 1)
+        axs = self.plot_nlth_upperbound()
         axs.title.set_text('hit the ground time percentage')
-        if not(self.nlth==0) : # if sinusoidal based threshold is provided, use it to plot target area
-            # plot frequency limits
-            axs.plot([self.nlth.f_min,self.nlth.f_min],[0,self.nlth.get_maximum_amp()], linestyle='dashed', c='black')
-            axs.plot([self.nlth.f_max,self.nlth.f_max],[0,self.nlth.get_maximum_amp()], linestyle='dashed', c='black')
-            # plot linearity upper bounds as from pre-estimation
-            axs.plot(self.nlth.nlth['freq'],self.nlth.nlth['A_min'])
-            axs.plot(self.nlth.nlth['freq'],self.nlth.nlth['A_max'])
-        # plot aesthetics
-        axs.set_xscale('log')
-        axs.set_yscale('log')
-        axs.grid()
-
         hit_ground_colours = [get_hit_ground_colour(x) for x in self.faPoints['hit_ground_perc']]
         axs.scatter(self.faPoints['freq'], self.faPoints['amp'], s=2, c=hit_ground_colours)
 
