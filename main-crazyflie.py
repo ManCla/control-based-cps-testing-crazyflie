@@ -100,7 +100,7 @@ print("Phase 2 done: I have generated {} test cases for each of the {} shapes".\
 print('Starting Phase 3: tests execution')
 
 # create characterization object to store the sampled points
-faCharact = faCharacterization(nlth=sinusoidal_upper_bound)
+faCharact = faCharacterization(sinusoidal_upper_bound)
 
 for i, s in enumerate(zTest.shapes) :      ## iterate over shapes
     if s in test_shapes :

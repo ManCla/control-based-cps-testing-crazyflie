@@ -12,6 +12,8 @@ from all of the tests: for each point we have
  - fa coordinates
  - degree of filtering
  - degree of non-linearity
+ - percentage of time spent with saturated motors
+ - percentage of time spent hitting the ground
  - test that was used to sample the point 
    (shape, amplitude_gain and time_scaling)
 
@@ -78,8 +80,9 @@ def get_hit_ground_colour(hit_ground) :
 
 class faCharacterization():
     
-    # TODO: nlth at this point should be required and not just optional
-    def __init__(self, nlth=0):
+    # - nlth is the object containing the sinusoidal based upper bounding
+    # of the threshold
+    def __init__(self, nlth):
         self.faPoints =  np.array([], dtype=faPoint_type) # init main vector containing all the points
         self.nlth = nlth # non-linear threshold upper-bound, optional and used for plotting
 
@@ -176,7 +179,7 @@ class faCharacterization():
 
     '''
     plot non-linearity characterization
-     - nl_max if the nldeg threshold above which a test is considered too much non-linear
+     - nl_max is the nldeg threshold above which a test is considered too much non-linear
        here it is used for defining the colour gradient when plotting
     '''
     def plot_non_linearity_characterization(self, non_linear_threshold) :
