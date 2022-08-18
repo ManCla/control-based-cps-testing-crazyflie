@@ -201,7 +201,6 @@ class faCharacterization():
 
         return axs # used for adding more elements to the plot
 
-
     '''
     plot non-linearity characterization
      - nl_max is the nldeg threshold above which a test is considered too much non-linear
