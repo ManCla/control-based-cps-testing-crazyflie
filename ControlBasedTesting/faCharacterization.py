@@ -65,14 +65,16 @@ def get_filtering_colour(dof) :
     return filter_color
 
 # local function to get colour associated to motors saturation time.
-# TODO: implemented using the filtering colour plotting fcn
-def get_motors_sat_colour(dof) :
-    return get_filtering_colour(dof)
+# NOTE: it assumes input in [0,1]
+def get_motors_sat_colour(mot_sat) :
+    mot_sat_color = [mot_sat,1-mot_sat,0]
+    return mot_sat_color
 
 # local function to get colour associated to hit ground time.
-# TODO: implemented using the filtering colour plotting fcn
-def get_hit_ground_colour(dof) :
-    return get_filtering_colour(dof)
+# NOTE: it assumes input in [0,1]
+def get_hit_ground_colour(hit_ground) :
+    hit_ground_color = [hit_ground,1-hit_ground,0]
+    return hit_ground_color
 
 # local function that computes the fa_mapping for an arbitrary input
 # used both for plotting and analysis 
