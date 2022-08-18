@@ -76,29 +76,6 @@ def get_hit_ground_colour(hit_ground) :
     hit_ground_color = [hit_ground,1-hit_ground,0]
     return hit_ground_color
 
-# local function that computes the fa_mapping for an arbitrary input
-# used both for plotting and analysis 
-def fa_mapping_for_input(ref, dt) :
-    # compute input fft
-    num_samples = int(ref.duration//dt)+1
-    z_fft_freq = fft.fftfreq(num_samples, d=dt)
-    ref_time_series = [ref.refGen(x)[2] for x in np.linspace(0,ref.duration, num_samples)]
-    z_ref_fft  = [abs(x) for x in fft.fft(ref_time_series, norm="forward", workers=-1, overwrite_x=True)]
-    # spectrum is symmetric
-    z_fft_freq = np.array(z_fft_freq)[:len(z_fft_freq)//2]
-    z_ref_fft  = np.array(z_ref_fft)[:len(z_ref_fft)//2]
-
-    if use_peaks_only : # TODO: doesn't make much sense that this is inconsistent with the approach
-                        #       used for the testing... maybe, because the objective is different ...
-        ref_peaks_indexes = [i for i in range(len(z_ref_fft)) if z_ref_fft[i]>spectrum_amp_threshold ]
-        freqs = z_fft_freq[ref_peaks_indexes]
-        amps  = z_ref_fft[ref_peaks_indexes]
-    else :
-        freqs = z_fft_freq
-        amps  = z_ref_fft
-    return freqs, amps
-
-
 class faCharacterization():
     
     # TODO: nlth at this point should be required and not just optional
@@ -295,43 +272,6 @@ class faCharacterization():
         axs.scatter(self.faPoints['freq'], self.faPoints['amp'], s=2, c=hit_ground_colours)
 
         return axs # used for adding more elements to the plot
-
-    '''
-    plot the freq-amp mapping of a given input against the characterization.
-    INPUT:
-     - reference generator object
-     - sampling time dt of input
-     - (optional) the non-linear th. upper bound (used for plotting only)
-    '''
-    def plot_input_mapping_on_characterization(self, ref, dt, non_linear_threshold) :
-
-        freqs, amps = fa_mapping_for_input(ref, dt) # compute fa mapping
-        # actual plotting
-        axs_nl = self.plot_non_linearity_characterization()
-        axs_nl.scatter(freqs, amps, s=25, c='black', marker="P")
-        axs_df = self.plot_filtering_characterization(non_linear_threshold)
-        axs_df.scatter(freqs, amps, s=25, c='black', marker="P")
-
-    '''
-    compute how much a given component at given frequency and amplitude is likely
-    to cause non-linear behaviour on its own.
-    '''
-    def compute_nl_deg_for_fa_point(self, freq, amp) : 
-        pass
-
-    '''
-    check acceptance metric for an arbitrary input 
-    '''
-    def check_input_on_characterization(self, ref, dt) :
-        nl_risk = 0 # init variable for risk evaluation of non-linear behaviour appearance
-        freqs, amps = fa_mapping_for_input(ref, dt) # compute fa mapping
-        # TODO: might not be best to do this one point at a time. An alternative could be to
-        #       filter all the points in the characterization to those that are neat any of the input
-        for i,f in enumerate(freqs) :
-            nl_deg_point = self.compute_nl_deg_for_fa_point(f,amps[i])
-            nl_risk = nl_risk + nl_deg_point # TODO: might want some form of weighting for this sum
-
-        return nl_risk
 
 
 if __name__ == "__main__":
