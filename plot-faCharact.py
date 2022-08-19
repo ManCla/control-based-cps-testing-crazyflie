@@ -17,7 +17,8 @@ faCharact = faCharacterization.open(sys.argv[1])
 
 faCharact.check_freq_ordering()
 
-faCharact.evaluate_shape_bandwidth(shape,nl_max)
+for s in ['steps', 'ramp', 'trapezoidal', 'triangular'] :
+    faCharact.evaluate_shape_bandwidth(s,nl_max,show_plot=False)
 
 # plot obtained characterization
 faCharact.plot_non_linearity_characterization(nl_max,shape=shape)
