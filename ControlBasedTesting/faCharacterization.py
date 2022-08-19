@@ -205,6 +205,8 @@ class faCharacterization():
         axs.plot(self.nlth.nlth['freq'],self.nlth.nlth['A_min'])
         axs.plot(self.nlth.nlth['freq'],self.nlth.nlth['A_max'])
         # plot aesthetics
+        axs.set_xlabel('Frequency [Hz]')
+        axs.set_ylabel('Amplitude')
         axs.set_xscale('log')
         axs.set_yscale('log')
         axs.grid()
