@@ -166,7 +166,7 @@ class faCharacterization():
     def check_freq_ordering(self) :
         if any([self.faPoints['freq'][i]-self.faPoints['freq'][i-1]<0 for i in range(1,len(self.faPoints['freq']))]) :
             print("ERROR faCharacterization -- faPoints not ordered by frequency")
-        exit()
+            exit()
 
     '''
     Function that evaluates the closed loop bandwidth (i.e.
