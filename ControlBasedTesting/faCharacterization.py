@@ -181,11 +181,39 @@ class faCharacterization():
     '''
     Function that evaluates the closed loop bandwidth (i.e.
     the frequency threshold above which input signals are not tracked)
+    INPUTS
+     - shape is the shape of the tests to analyse ('none' uses all tests)
+     - non linear threshold is needed to exclude non-linear tests
+     - show_plot triggers the plotting of the degree of filtering as function of the frequency
     '''
-    def evaluate_bandwidth(self) :
+    def evaluate_shape_bandwidth(self, shape, non_linear_threshold, show_plot=False) :
+        
+        # get only points of tests belonging to one shape
+        shape_points = self.get_shape_points(shape)
         # do not consider non-linear tests
-        # find frequency threshold
-        pass
+        lin_points = np.array([x for x in shape_points if x['deg_non_lin']<non_linear_threshold], dtype=faPoint_type)
+        # check that points are still ordered (don't think it's really needed)
+        if any([lin_points['freq'][i]-lin_points['freq'][i-1]<0 for i in range(1,len(lin_points['freq']))]) :
+            print("ERROR faCharacterization:eval_fb -- faPoints of given shape not ordered by frequency")
+            exit()
+        # print out tests that do not fulfil the MR on increasing filtering over frequencies
+        # it feels very unlikely that linear tests do not fulfil the MR by track high frequencies
+        # funky_tests= [x for x in lin_points if x['freq']<0.55 and x['deg_filtering']>0.5]
+        # for x in funky_tests:
+        #     print("funky test : ramp-"+str(x['a_gain'])+"-"+str(x['t_scale']))
+
+        # actual analysis and plotting (if requested)
+        print("Evaluate closed-loop bandwidth according to shape "+str(shape))
+        print("  max tracked frequency  = "+str(max([x['freq'] for x in lin_points if x['deg_filtering']<0.5])))
+        print("  min filtered frequency = "+str(min([x['freq'] for x in lin_points if x['deg_filtering']>0.5])))
+        if show_plot :
+            _, axs = plt.subplots(1, 1)
+            axs.scatter(lin_points['freq'],lin_points['deg_filtering'], s=2, c='black')
+            axs.plot([0.1,2],[0.5,0.5], linestyle='dashed', c='red')
+            axs.title.set_text('Tests from shape: '+shape)
+            axs.set_xlabel('Frequency [Hz]')
+            axs.set_ylabel('Degree of Filtering []')
+            axs.set_xlim([0.1,2])
 
     ##########################
     ### PLOTTING FUNCTIONS ###
