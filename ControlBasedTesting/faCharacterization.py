@@ -169,6 +169,16 @@ class faCharacterization():
             exit()
 
     '''
+    returns only the points belonging to tests associated to a given shape.
+    if shape='none' all points of the characterization are returned
+    '''
+    def get_shape_points(self, shape) :
+        if shape=='none' :
+            return self.faPoints
+        else :
+            return np.array([x for x in self.faPoints if (x['shape']==shape) ], dtype=faPoint_type)
+
+    '''
     Function that evaluates the closed loop bandwidth (i.e.
     the frequency threshold above which input signals are not tracked)
     '''
@@ -206,23 +216,25 @@ class faCharacterization():
      - nl_max is the nldeg threshold above which a test is considered too much non-linear
        here it is used for defining the colour gradient when plotting
     '''
-    def plot_non_linearity_characterization(self, non_linear_threshold) :
+    def plot_non_linearity_characterization(self, non_linear_threshold, shape='none') :
 
+        plot_points = self.get_shape_points(shape) # get only point of the desired shape (if given)
         axs = self.plot_nlth_upperbound()
         axs.title.set_text('degree of non linearity')
-        nldg_colours = [get_nldg_colour(x, non_linear_threshold) for x in self.faPoints['deg_non_lin']]
-        axs.scatter(self.faPoints['freq'], self.faPoints['amp'], s=2, c=nldg_colours)
+        nldg_colours = [get_nldg_colour(x, non_linear_threshold) for x in plot_points['deg_non_lin']]
+        axs.scatter(plot_points['freq'], plot_points['amp'], s=2, c=nldg_colours)
 
         return axs # used for adding more elements to the plot
 
     '''
     plot filtering characterization
     '''
-    def plot_filtering_characterization(self, non_linear_threshold) :
+    def plot_filtering_characterization(self, non_linear_threshold, shape='none') :
 
+        plot_points = self.get_shape_points(shape) # get only point of the desired shape (if given)
         axs = self.plot_nlth_upperbound()
         axs.title.set_text('degree of filtering')
-        lin_points = np.array([x for x in self.faPoints if x['deg_non_lin']<non_linear_threshold], dtype=faPoint_type)
+        lin_points = np.array([x for x in plot_points if x['deg_non_lin']<non_linear_threshold], dtype=faPoint_type)
         dof_colours = [get_filtering_colour(x['deg_filtering']) for x in lin_points]
         axs.scatter(lin_points['freq'], lin_points['amp'], s=2, c=dof_colours)
 
@@ -231,24 +243,26 @@ class faCharacterization():
     '''
     plot motors saturation
     '''
-    def plot_motors_saturation_characterization(self) :
+    def plot_motors_saturation_characterization(self, shape='none') :
 
+        plot_points = self.get_shape_points(shape) # get only point of the desired shape (if given)
         axs = self.plot_nlth_upperbound()
         axs.title.set_text('motors saturation time percentage')
-        motor_sat_colours = [get_motors_sat_colour(x) for x in self.faPoints['saturation_perc']]
-        axs.scatter(self.faPoints['freq'], self.faPoints['amp'], s=2, c=motor_sat_colours)
+        motor_sat_colours = [get_motors_sat_colour(x) for x in plot_points['saturation_perc']]
+        axs.scatter(plot_points['freq'], plot_points['amp'], s=2, c=motor_sat_colours)
 
         return axs # used for adding more elements to the plot
 
     '''
     plot hit ground
     '''
-    def plot_hit_ground_characterization(self) :
+    def plot_hit_ground_characterization(self, shape='none') :
 
+        plot_points = self.get_shape_points(shape) # get only point of the desired shape (if given)
         axs = self.plot_nlth_upperbound()
         axs.title.set_text('hit the ground time percentage')
-        hit_ground_colours = [get_hit_ground_colour(x) for x in self.faPoints['hit_ground_perc']]
-        axs.scatter(self.faPoints['freq'], self.faPoints['amp'], s=2, c=hit_ground_colours)
+        hit_ground_colours = [get_hit_ground_colour(x) for x in plot_points['hit_ground_perc']]
+        axs.scatter(plot_points['freq'], plot_points['amp'], s=2, c=hit_ground_colours)
 
         return axs # used for adding more elements to the plot
 

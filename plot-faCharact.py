@@ -11,13 +11,18 @@ from command line and plots it
 '''
 
 nl_max = 0.15
+shape = 'none'
 
 faCharact = faCharacterization.open(sys.argv[1])
 
+faCharact.check_freq_ordering()
+
+faCharact.evaluate_shape_bandwidth(shape,nl_max)
+
 # plot obtained characterization
-faCharact.plot_non_linearity_characterization(nl_max)
-faCharact.plot_filtering_characterization(nl_max)
-faCharact.plot_motors_saturation_characterization()
-faCharact.plot_hit_ground_characterization()
+faCharact.plot_non_linearity_characterization(nl_max,shape=shape)
+faCharact.plot_filtering_characterization(nl_max,shape=shape)
+faCharact.plot_motors_saturation_characterization(shape=shape)
+faCharact.plot_hit_ground_characterization(shape=shape)
 
 plt.show()
