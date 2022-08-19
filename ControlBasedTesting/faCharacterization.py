@@ -248,9 +248,12 @@ class faCharacterization():
     '''
     def plot_non_linearity_characterization(self, non_linear_threshold, shape='none') :
 
+        title = 'degree of non linearity'
+        if not(shape=='none') :
+            title = title +' ('+shape+')'
         plot_points = self.get_shape_points(shape) # get only point of the desired shape (if given)
         axs = self.plot_nlth_upperbound()
-        axs.title.set_text('degree of non linearity')
+        axs.title.set_text(title)
         nldg_colours = [get_nldg_colour(x, non_linear_threshold) for x in plot_points['deg_non_lin']]
         axs.scatter(plot_points['freq'], plot_points['amp'], s=2, c=nldg_colours)
 
@@ -261,9 +264,12 @@ class faCharacterization():
     '''
     def plot_filtering_characterization(self, non_linear_threshold, shape='none') :
 
+        title = 'degree of filtering'
+        if not(shape=='none') :
+            title = title +' ('+shape+')'
         plot_points = self.get_shape_points(shape) # get only point of the desired shape (if given)
         axs = self.plot_nlth_upperbound()
-        axs.title.set_text('degree of filtering')
+        axs.title.set_text(title)
         lin_points = np.array([x for x in plot_points if x['deg_non_lin']<non_linear_threshold], dtype=faPoint_type)
         dof_colours = [get_filtering_colour(x['deg_filtering']) for x in lin_points]
         axs.scatter(lin_points['freq'], lin_points['amp'], s=2, c=dof_colours)
@@ -275,9 +281,12 @@ class faCharacterization():
     '''
     def plot_motors_saturation_characterization(self, shape='none') :
 
+        title = 'motors saturation time percentage'
+        if not(shape=='none') :
+            title = title +' ('+shape+')'
         plot_points = self.get_shape_points(shape) # get only point of the desired shape (if given)
         axs = self.plot_nlth_upperbound()
-        axs.title.set_text('motors saturation time percentage')
+        axs.title.set_text(title)
         motor_sat_colours = [get_motors_sat_colour(x) for x in plot_points['saturation_perc']]
         axs.scatter(plot_points['freq'], plot_points['amp'], s=2, c=motor_sat_colours)
 
@@ -288,9 +297,12 @@ class faCharacterization():
     '''
     def plot_hit_ground_characterization(self, shape='none') :
 
+        title = 'hit the ground time percentage'
+        if not(shape=='none') :
+            title = title +' ('+shape+')'
         plot_points = self.get_shape_points(shape) # get only point of the desired shape (if given)
         axs = self.plot_nlth_upperbound()
-        axs.title.set_text('hit the ground time percentage')
+        axs.title.set_text(title)
         hit_ground_colours = [get_hit_ground_colour(x) for x in plot_points['hit_ground_perc']]
         axs.scatter(plot_points['freq'], plot_points['amp'], s=2, c=hit_ground_colours)
 
