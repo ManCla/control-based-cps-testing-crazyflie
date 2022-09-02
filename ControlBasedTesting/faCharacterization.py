@@ -313,6 +313,11 @@ class faCharacterization():
     ################################
     '''
     Function to generate csv file with the fa points data
+    INPUTS:
+     - shapes is needed to iterate over the shapes
+     - nonlinear threshold is needed to saturate the dnl and identify non-lin tests
+     - linear_only is used to output only the fapoints of tests with linear bh
+                   it is needed for frequency analysis (and to not have to filter in latex)
     '''
     def generate_csv(self, shapes, non_linear_threshold, linear_only):
         for s in shapes :
