@@ -308,6 +308,30 @@ class faCharacterization():
 
         return axs # used for adding more elements to the plot
 
+    ################################
+    ### CSV GENERATION FUNCTIONS ###
+    ################################
+    '''
+    Function to generate csv file with the fa points data
+    '''
+    def generate_csv(self, shapes, non_linear_threshold, linear_only):
+        for s in shapes :
+            suffix = '.csv'
+            shape_points = self.get_shape_points(s)
+            if linear_only :
+                shape_points = np.array([x for x in shape_points if x['deg_non_lin']<non_linear_threshold], dtype=faPoint_type)
+                suffix = '_lin_only'+suffix
+            output_filename = 'faCharacterization_'+s+suffix
+            # we don't want the shape field and have to "remove" it manually
+            output = shape_points[('freq')]
+            output = np.vstack((output,shape_points[('amp')]))
+            output = np.vstack((output,shape_points[('weight')]))
+            # saturate dnl to non_linear_threshold
+            output = np.vstack((output,[min(x,non_linear_threshold) for x in shape_points[('deg_non_lin')]]))
+            output = np.vstack((output,shape_points[('saturation_perc')]))
+            output = np.vstack((output,shape_points[('hit_ground_perc')]))
+            output = np.vstack((output,shape_points[('deg_filtering')]))
+            np.savetxt(output_filename, output.transpose() , delimiter=',')
 
 if __name__ == "__main__":
     charact = faCharacterization()
