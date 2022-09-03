@@ -30,7 +30,6 @@ nl_max     = 0.15 # value of non-linear degree above which a test
 # shapes to be used for the test case generation
 test_shapes = ['steps', 'ramp', 'trapezoidal', 'triangular']
 
-
 #####################################################################
 ### PHASE 1: sinusoidal-based non-linearity threshold exploration ###
 #####################################################################
@@ -38,32 +37,38 @@ test_shapes = ['steps', 'ramp', 'trapezoidal', 'triangular']
 # OUTPUT: non-linear best-case bound of threshold
 print("Starting Phase 1: upper bounding of non-linear threshold with sinusoidal inputs")
 
+phase_1_tests_counter = 0
+
 # crate object to store upperbound of nonlinear th based on sinus tests
 sinusoidal_upper_bound = NLthUpperbound(delta_amp, delta_freq, f_min, f_max)
 
 ### Find th for f_min ###
 print("Phase 1: amplitude binary search along minimum frequency: {}".format(f_min))
-lower, upper = binary_search_sinus_freq(cfSimulation, zTest, ZAnalysis, \
-                                        f_min, delta_amp, max_amp, nl_max, data_directory)
+lower, upper, c= binary_search_sinus_freq(cfSimulation, zTest, ZAnalysis, \
+                                          f_min, delta_amp, max_amp, nl_max, data_directory)
+phase_1_tests_counter = phase_1_tests_counter+c
 sinusoidal_upper_bound.add_sample(f_min, lower, upper) # add sample to threshold
 
 ### Find th for f_max ###
 print("Phase 1: amplitude binary search along maximum frequency: {}".format(f_max))
-lower, upper = binary_search_sinus_freq(cfSimulation, zTest, ZAnalysis, \
-                                        f_max, delta_amp, max_amp, nl_max, data_directory)
+lower, upper, c= binary_search_sinus_freq(cfSimulation, zTest, ZAnalysis, \
+                                          f_max, delta_amp, max_amp, nl_max, data_directory)
+phase_1_tests_counter = phase_1_tests_counter+c
 sinusoidal_upper_bound.add_sample(f_max, lower, upper) # add sample to threshold
 
 freq = sinusoidal_upper_bound.sample()
 while freq : # iteration over frequency axis
     print("Phase 1: amplitude binary search along frequency: {}".format(freq))
     # this function call implements the search along the amplitude axis
-    lower, upper = binary_search_sinus_freq(cfSimulation, zTest, ZAnalysis, \
-                                            freq, delta_amp, max_amp, nl_max, data_directory)
+    lower, upper, c= binary_search_sinus_freq(cfSimulation, zTest, ZAnalysis, \
+                                              freq, delta_amp, max_amp, nl_max, data_directory)
+    phase_1_tests_counter = phase_1_tests_counter+c
     # print("At freq: {} upper: {} lower: {}".format(freq,upper,lower))
     sinusoidal_upper_bound.add_sample(freq, lower, upper) # add sample to threshold
     freq = sinusoidal_upper_bound.sample()
 
-print("Phase 1 done: I have sampled {} frequencies".format(sinusoidal_upper_bound.nlth.size))
+print("Phase 1 done: I have sampled {} frequencies and executed {} tests".format\
+    (sinusoidal_upper_bound.nlth.size,phase_1_tests_counter))
 
 ####################################
 ### PHASE 2: test set generation ###

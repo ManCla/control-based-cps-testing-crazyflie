@@ -12,6 +12,8 @@ def binary_search_sinus_freq(Simulator, TestCase, TestData, \
     upper  = max_amp         # search upper bound
     amp    = (upper+lower)/2 # initialize amplitude search
 
+    tests_counter = 0
+
     while abs(upper-lower)>delta_amp : # while not close enough to non-lin. th.
         test      = TestCase('sinus', amp, freq)
         file_path = data_directory+'sinus'+'-'+str(amp)+'-'+str(test.time_coef)
@@ -25,6 +27,7 @@ def binary_search_sinus_freq(Simulator, TestCase, TestData, \
         test_data = TestData()
         test_data.open(file_path, silent=True)
         nl_deg    = test_data.get_z_non_linear_degree() # get degree of non-linearity
+        tests_counter = tests_counter+1 # increase counter of tests
 
         # binary search
         if nl_deg > nl_max :  # non-linear behaviour with large input
@@ -41,4 +44,4 @@ def binary_search_sinus_freq(Simulator, TestCase, TestData, \
     # this final normalization makes the threshold usable across shapes
     # NOTE: test_data.get_z_ref_fft_peaks()[1] is always the max in sinus tests
     fft_amp_ratio = amp/test_data.get_z_ref_fft_peaks()[1]
-    return lower/fft_amp_ratio, upper/fft_amp_ratio
+    return lower/fft_amp_ratio, upper/fft_amp_ratio, tests_counter
