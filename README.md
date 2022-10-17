@@ -33,4 +33,24 @@ The repository contains the following scripts
 
 ## Execution of Testing Campaign
 
+To execute the testing campaign for the Crazyflie, just run 
+'''
+python main-crazyflie.py
+'''
+The script stores the intermediate results (the results of each test and the characterisation classes) [pickled](https://docs.python.org/3/library/pickle.html) object.
+This allows to interrupt the process anytime and restart it with minimal waste of time.
 
+To plot the set of frequency-amplitude points run
+'''
+python plot-faCharact.py path/to/stored/characterisation
+'''
+
+To plot the results of a given test run
+'''
+python plot.py path/to/stored/test/results
+'''
+
+To run the preliminary evaluation of the number  of periods needed for the degree of non-linearity computation run
+'''
+python num-periods-eval-crazyflie.py
+'''
