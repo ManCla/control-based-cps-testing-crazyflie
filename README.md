@@ -13,11 +13,16 @@ Note that the integration is with the branch [z-test-approach-repo-integration](
 The repository contains the following directories
 
  * _ControlBasedTesting_: contains the classes and functions that  implement the proposed testing apporach:
-   * upper bound degree of non-linearity threshold _class_
-   * binary search _function_
-   * generate test set _function_
-   * frequency-amplitude data _class_
-   * frequency-amplitude characterization _class_
+     * _NLthUpperbound.py_:
+       upper bound degree of non-linearity threshold _class_
+     * _binary\_search\_sinus\_freq.py_:
+       binary search _function_
+     * _faCharacterization.py_:
+       frequency-amplitude characterization _class_
+     * _shapeTestSet.py_:
+       test set _class_
+
+
 * _CrazyflieSimulationPython_: contains the submodule of the drone model.
 
 The repository contains the followign scripts
