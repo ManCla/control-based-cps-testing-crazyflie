@@ -29,9 +29,9 @@ nl_max     = 0.15 # value of non-linear degree above which a test
 # shapes to be used for the test case generation
 test_shapes = ['steps', 'ramp', 'trapezoidal', 'triangular']
 
-#####################################################################
-### PHASE 1: sinusoidal-based non-linearity threshold exploration ###
-#####################################################################
+####################################################################
+### STEP 1: sinusoidal-based non-linearity threshold exploration ###
+###################################################################
 # INPUTS: f_min, f_max, delta_amp, max_amp
 # OUTPUT: non-linear best-case bound of threshold
 print("Starting Phase 1: upper bounding of non-linear threshold with sinusoidal inputs")
@@ -69,9 +69,9 @@ while freq : # iteration over frequency axis
 print("Phase 1 done: I have sampled {} frequencies and executed {} tests".format\
     (sinusoidal_upper_bound.nlth.size,phase_1_tests_counter))
 
-####################################
-### PHASE 2: test set generation ###
-####################################
+###################################
+### STEP 2: test set generation ###
+###################################
 # INPUTS: shapes, f_min, f_max, nl_th, delta_amp
 # OUTPUT: a vector of length num_tests of (d,A) pairs for each shape
 print('Starting Phase 2: test set generation')
@@ -96,9 +96,9 @@ for s in test_shapes :
 print("Phase 2 done: I have generated {} test cases for each of the {} shapes".\
       format(len(test_set[0].test_cases),len(test_set)))
 
-################################
-### PHASE 3: Tests Execution ###
-################################
+###############################
+### STEP 3: Tests Execution ###
+###############################
 # INPUTS: test set
 # OUTPUT: frequency-amplitude points and associated behaviour
 print('Starting Phase 3: tests execution')
