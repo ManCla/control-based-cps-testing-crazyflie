@@ -54,3 +54,6 @@ To run the preliminary evaluation of the number  of periods needed for the degre
 ```
 python num-periods-eval-crazyflie.py
 ```
+# Contact
+
+Should you have any questions concerning the code or the paper, feel free to reach out to [me](https://mancla.github.io).
