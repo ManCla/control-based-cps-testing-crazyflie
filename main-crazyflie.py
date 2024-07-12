@@ -135,7 +135,7 @@ for i, s in enumerate(zTest.shapes) :      ## iterate over shapes
 # plane with the plot-ztests-fft.py script
 
 # Use this to store a characterization object
-# faCharact.save()
+faCharact.save()
 
 # plot obtained characterization
 faCharact.plot_non_linearity_characterization(nl_max)
