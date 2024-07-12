@@ -17,8 +17,6 @@ if not os.path.exists(data_directory):
 
 rnd.seed(1) # seed for repeatability
 
-only_main_component = True
-
 #######################
 ### APPROACH INPUTS ###
 #######################
@@ -106,7 +104,10 @@ print("Phase 2 done: I have generated {} test cases for each of the {} shapes".\
 print('Starting Phase 3: tests execution')
 
 # create characterization object to store the sampled points
-faCharact = faCharacterization(sinusoidal_upper_bound)
+# one storing all of the points of each test
+# one storing only the main component (i.e., the largest amp one)
+faCharact_only_main = faCharacterization(sinusoidal_upper_bound)
+faCharact_all = faCharacterization(sinusoidal_upper_bound)
 
 for i, s in enumerate(zTest.shapes) :      ## iterate over shapes
     if s in test_shapes :
@@ -123,17 +124,15 @@ for i, s in enumerate(zTest.shapes) :      ## iterate over shapes
                 print("-> test already executed: "+file_path)
                 result = ZAnalysis()
             result.open(file_path, silent=True)
-            if only_main_component:
-                faCharact.add_test([result.get_z_fft_freq_peaks()[1]],\
-                                   [result.get_z_ref_fft_peaks()[1]],\
-                                   [result.get_z_filter_degree()[1]],\
-                                   result.get_z_non_linear_degree(),\
-                                   result.get_motors_saturated(),\
-                                   result.get_hit_ground(),\
-                                   s, test['t_scale'], test['a_gain'],
-                                   only_main_component)
-            else :
-                faCharact.add_test(result.get_z_fft_freq_peaks(),\
+            faCharact_only_main.add_test([result.get_z_fft_freq_peaks()[1]],\
+                                         [result.get_z_ref_fft_peaks()[1]],\
+                                         [result.get_z_filter_degree()[1]],\
+                                         result.get_z_non_linear_degree(),\
+                                         result.get_motors_saturated(),\
+                                         result.get_hit_ground(),\
+                                         s, test['t_scale'], test['a_gain'],
+                                         only_main_component=True)
+            faCharact_all.add_test(result.get_z_fft_freq_peaks(),\
                                    result.get_z_ref_fft_peaks(),\
                                    result.get_z_filter_degree(),\
                                    result.get_z_non_linear_degree(),\
@@ -145,4 +144,5 @@ for i, s in enumerate(zTest.shapes) :      ## iterate over shapes
 # plane with the plot-ztests-fft.py script
 
 # Use this to store a characterization object
-faCharact.save()
+faCharact_only_main.save(name="only-main")
+faCharact_all.save(name="all")
