@@ -114,9 +114,9 @@ class faCharacterization():
     add a set of points coming from the same test
     '''
     def add_test(self, freqs, amps, deg_filtering, deg_non_lin, saturation, hit_ground,\
-                 test_shape, test_tScale, test_aScale):
+                 test_shape, test_tScale, test_aScale, only_main_component=False):
         # check that vectors contain info about consistent number of points
-        if not(len(freqs)==len(amps) and len(amps)==len(deg_filtering)) :
+        if not(only_main_component) and not(len(freqs)==len(amps) and len(amps)==len(deg_filtering)) :
             print("ERROR -- faCharacterization: inconsistent number of points info")
         signal_power = sum(amps)
 

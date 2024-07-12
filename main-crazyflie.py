@@ -17,6 +17,8 @@ if not os.path.exists(data_directory):
 
 rnd.seed(1) # seed for repeatability
 
+only_main_component = True
+
 #######################
 ### APPROACH INPUTS ###
 #######################
@@ -121,13 +123,23 @@ for i, s in enumerate(zTest.shapes) :      ## iterate over shapes
                 print("-> test already executed: "+file_path)
                 result = ZAnalysis()
             result.open(file_path, silent=True)
-            faCharact.add_test(result.get_z_fft_freq_peaks(),\
-                               result.get_z_ref_fft_peaks(),\
-                               result.get_z_filter_degree(),\
-                               result.get_z_non_linear_degree(),\
-                               result.get_motors_saturated(),\
-                               result.get_hit_ground(),\
-                               s, test['t_scale'], test['a_gain'])
+            if only_main_component:
+                faCharact.add_test([result.get_z_fft_freq_peaks()[1]],\
+                                   [result.get_z_ref_fft_peaks()[1]],\
+                                   [result.get_z_filter_degree()[1]],\
+                                   result.get_z_non_linear_degree(),\
+                                   result.get_motors_saturated(),\
+                                   result.get_hit_ground(),\
+                                   s, test['t_scale'], test['a_gain'],
+                                   only_main_component)
+            else :
+                faCharact.add_test(result.get_z_fft_freq_peaks(),\
+                                   result.get_z_ref_fft_peaks(),\
+                                   result.get_z_filter_degree(),\
+                                   result.get_z_non_linear_degree(),\
+                                   result.get_motors_saturated(),\
+                                   result.get_hit_ground(),\
+                                   s, test['t_scale'], test['a_gain'])
 
 # the results of the tests can be plotted on the frequency-amplitude
 # plane with the plot-ztests-fft.py script
