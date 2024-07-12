@@ -212,7 +212,7 @@ class faCharacterization():
             else :
                 title = title+' ('+shape+')'
             _, axs = plt.subplots(1, 1)
-            axs.scatter(shape_points['freq'],shape_points['deg_filtering'], s=2, c='black')
+            axs.scatter(lin_points['freq'],lin_points['deg_filtering'], s=2, c='black')
             axs.plot([0.1,2],[0.5,0.5], linestyle='dashed', c='red')
             axs.title.set_text(title)
             axs.set_xlabel('Frequency [Hz]')
