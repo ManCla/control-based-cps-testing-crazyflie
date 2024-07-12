@@ -186,7 +186,7 @@ class faCharacterization():
      - non linear threshold is needed to exclude non-linear tests
      - show_plot triggers the plotting of the degree of filtering as function of the frequency
     '''
-    def evaluate_shape_bandwidth(self, shape, non_linear_threshold, show_plot=False) :
+    def evaluate_shape_bandwidth(self, shape, non_linear_threshold, show_plot=False, title=None) :
         
         # get only points of tests belonging to one shape
         shape_points = self.get_shape_points(shape)
@@ -207,10 +207,14 @@ class faCharacterization():
         print("  max tracked frequency  = "+str(max([x['freq'] for x in lin_points if x['deg_filtering']<0.5])))
         print("  min filtered frequency = "+str(min([x['freq'] for x in lin_points if x['deg_filtering']>0.5])))
         if show_plot :
+            if title is None :
+                title = 'Tests from shape: '+shape
+            else :
+                title = title+' ('+shape+')'
             _, axs = plt.subplots(1, 1)
-            axs.scatter(lin_points['freq'],lin_points['deg_filtering'], s=2, c='black')
+            axs.scatter(shape_points['freq'],shape_points['deg_filtering'], s=2, c='black')
             axs.plot([0.1,2],[0.5,0.5], linestyle='dashed', c='red')
-            axs.title.set_text('Tests from shape: '+shape)
+            axs.title.set_text(title)
             axs.set_xlabel('Frequency [Hz]')
             axs.set_ylabel('Degree of Filtering []')
             axs.set_xlim([0.1,2])
@@ -246,9 +250,10 @@ class faCharacterization():
      - nl_max is the nldeg threshold above which a test is considered too much non-linear
        here it is used for defining the colour gradient when plotting
     '''
-    def plot_non_linearity_characterization(self, non_linear_threshold, shape='none') :
+    def plot_non_linearity_characterization(self, non_linear_threshold, shape='none', title=None) :
 
-        title = 'degree of non linearity'
+        if title is None:
+            title = 'degree of non linearity'
         if not(shape=='none') :
             title = title +' ('+shape+')'
         plot_points = self.get_shape_points(shape) # get only point of the desired shape (if given)
@@ -279,9 +284,10 @@ class faCharacterization():
     '''
     plot motors saturation
     '''
-    def plot_motors_saturation_characterization(self, shape='none') :
+    def plot_motors_saturation_characterization(self, shape='none',title=None) :
 
-        title = 'motors saturation time percentage'
+        if title is None :
+            title = 'motors saturation time percentage'
         if not(shape=='none') :
             title = title +' ('+shape+')'
         plot_points = self.get_shape_points(shape) # get only point of the desired shape (if given)
