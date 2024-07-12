@@ -1,4 +1,3 @@
-import matplotlib.pyplot as plt # for plotting
 import random as rnd            # for setting the seed of the random generator
 import os                       # for handling paths
 import numpy as np
@@ -94,7 +93,6 @@ for s in test_shapes :
     test_set[-1].generate_test_set(freqs_under_test)
     # test_set[-1].plot_test_set()
 
-# plt.show()
 print("Phase 2 done: I have generated {} test cases for each of the {} shapes".\
       format(len(test_set[0].test_cases),len(test_set)))
 
@@ -136,8 +134,3 @@ for i, s in enumerate(zTest.shapes) :      ## iterate over shapes
 
 # Use this to store a characterization object
 faCharact.save()
-
-# plot obtained characterization
-faCharact.plot_non_linearity_characterization(nl_max)
-faCharact.plot_filtering_characterization(nl_max)
-plt.show()
