@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt # for plotting
 import random as rnd            # for setting the seed of the random generator
-from os.path import exists      # to check if test has already been performed
+import os                       # for handling paths
 import numpy as np
 
 # utilities of testing approach
@@ -13,6 +13,8 @@ from ControlBasedTesting.faCharacterization import faCharacterization
 from CrazyflieSimulationPython.cfSimulator import cfSimulation, ZAnalysis, zTest
 
 data_directory = 'cfdata_nlmax015/'
+if not os.path.exists(data_directory):
+    os.makedirs(data_directory)
 
 rnd.seed(1) # seed for repeatability
 
@@ -113,7 +115,7 @@ for i, s in enumerate(zTest.shapes) :      ## iterate over shapes
             print("Running test: Shape: {} Amp_scale: {} Time_scale: {}".format(s,test['a_gain'],test['t_scale']))
             test_input = zTest(s,test['a_gain'],test['t_scale'])
             file_path = data_directory+s+'-'+str(test['a_gain'])+'-'+str(test['t_scale'])
-            if not(exists(file_path)) :
+            if not(os.path.exists(file_path)) :
                 sut    = cfSimulation()      # initialize simulation object
                 result = sut.run(test_input, inital_drone_state=test_input.get_initial_state())       # test execution
                 result.save(name=file_path)
