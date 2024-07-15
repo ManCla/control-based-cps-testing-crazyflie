@@ -16,6 +16,12 @@ git submodule init
 git submodule update
 ```
 
+You will also need some common Python packages: numpy, scipy, and matplotlib.
+You can install them with the following command:
+```
+pip3 install numpy scipy matplotlib
+```
+
 ## Repository Structure and Content
 
 The repository contains the following directories
