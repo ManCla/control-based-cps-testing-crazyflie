@@ -1,12 +1,20 @@
 # Control-Based CPS Stress Tesing: Crazyflie case study
 
 This repository is associated to the submission of the paper Stress Testing of Control-Based Cyber-Physical Systems.
-It contains the the python scripts, classes and functions that implement the proposed testing apporach.
+It contains the the python scripts, classes and functions that implement the proposed testing approach.
 
-## Dependancies and Submodules
+## Dependencies and Submodules
+
+The testing approach and the drone model are written in Python (you can find the python releases [here](https://www.python.org/downloads/)).
+They were written and tested using Python 3.11, but should work also with more recent versions.
 
 The drone model can be found in another repository (here inlcuded as a submodule): [Crazyflie model repo](https://github.com/ManCla/crazyflie-simulation-python).
 Note that the integration is with the branch [z-test-approach-repo-integration](https://github.com/ManCla/crazyflie-simulation-python/tree/ztest-approach-repo-integration) of the drone model repository and that **the submodule folder needs to be renamed to _CrazyflieSimulationPython_**.
+The submodule can be set up with the following commands:
+```
+git submodule init
+git submodule update
+```
 
 ## Repository Structure and Content
 
@@ -40,6 +48,11 @@ python main-crazyflie.py
 The script stores the intermediate results (the results of each test and the characterisation classes) [pickled](https://docs.python.org/3/library/pickle.html) object.
 This allows to interrupt the process anytime and restart it with minimal waste of time.
 
+To generate the very same figures as in the paper run:
+```
+python plot-paper-figures.py
+```
+
 To plot the set of frequency-amplitude points run
 ```
 python plot-faCharact.py path/to/stored/characterisation
@@ -54,6 +67,7 @@ To run the preliminary evaluation of the number  of periods needed for the degre
 ```
 python num-periods-eval-crazyflie.py
 ```
+
 # Contact
 
 Should you have any questions concerning the code or the paper, feel free to reach out to [me](https://mancla.github.io).
