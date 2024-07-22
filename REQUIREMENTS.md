@@ -5,7 +5,11 @@ They were written and tested using Python 3.11.
 You will also need some common Python packages: numpy, scipy, and matplotlib.
 You can install them with the following command:
 ```
-pip3 install numpy scipy matplotlib
+    pip3 install numpy==1.24.1
+    pip3 install scipy==1.10.0
+    pip3 install matplotlib==3.8.2
 ```
 
-The generate data for the full Crazyflie testing campaign take about 35Gb.
+The packages have been tested with the versions reported in the commands.
+
+The data generated for the full Crazyflie testing campaign take about 35Gb.

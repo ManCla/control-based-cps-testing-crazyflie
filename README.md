@@ -19,8 +19,12 @@ git submodule update
 You will also need some common Python packages: numpy, scipy, and matplotlib.
 You can install them with the following command:
 ```
-pip3 install numpy scipy matplotlib
+    pip3 install numpy==1.24.1
+    pip3 install scipy==1.10.0
+    pip3 install matplotlib==3.8.2
 ```
+
+The packages have been tested with the reported versions.
 
 ## Repository Structure and Content
 
